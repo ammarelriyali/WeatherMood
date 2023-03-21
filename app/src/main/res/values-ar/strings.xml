@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherMood</string>
+    <string name="menu_home">الرئيسية</string>
+    <string name="menu_favourite">المفضلة</string>
+    <string name="menu_alert">التنبيهات</string>
+    <string name="app_name_nav">حالة الطقس</string>
+    <string name="menu_setting">الظبط</string>
+</resources>

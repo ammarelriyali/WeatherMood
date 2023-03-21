@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name" translatable="false">WeatherMood</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+    <string name="action_settings" translatable="false">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_favourite">Favourite</string>
+    <string name="menu_alert">Alert</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="app_name_nav">Weather Mood</string>
+    <string name="menu_setting">Setting</string>
+</resources>
