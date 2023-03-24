@@ -3,4 +3,8 @@
         <color name="blue_200">#4F80FF</color>
         <color name="black">#FF000000</color>
         <color name="white">#FFFFFFFF</color>
+        <color name="card_light">#FAFAFA</color>
+        <color name="card_dark">#242425</color>
+        <color name="toolbar_color">#201D1D</color>
+
 </resources>

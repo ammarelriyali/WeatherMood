@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<style name="textViewHome" parent="Widget.AppCompat.TextView">
+    <item name="android:textColor">?attr/colorOnSecondary</item>
+</style>
+    <style name="textViewOnCardHome" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/white</item>
+</style>
+</resources>
