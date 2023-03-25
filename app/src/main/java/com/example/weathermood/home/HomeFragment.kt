@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,7 +23,6 @@ import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
-import com.google.android.gms.tasks.TaskCompletionSource
 import java.util.*
 
 class HomeFragment : Fragment() {
@@ -47,11 +45,12 @@ class HomeFragment : Fragment() {
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        homeViewModel.text.observe()
+
         getLocation()
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -89,11 +88,7 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun getLocationData() {
-//        val locationRequest = LocationRequest.create();
-//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        locationRequest.setInterval(20 * 1000);
-//        fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-//        fusedClient.requestLocationUpdates(locationRequest, mCallBack, Looper.myLooper())
+
         fusedClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
             override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
 
@@ -101,33 +96,19 @@ class HomeFragment : Fragment() {
         })
             .addOnSuccessListener { location: Location? ->
                 if (location == null)
-                    Toast.makeText(this, "Cannot get location.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT).show()
                 else {
-                    val lat = location.latitude
-                    val lon = location.longitude
+                   setLocation(location!!.latitude.toString(),location!!.longitude.toString())
                 }
 
             }
 
     }
 
-    val mCallBack = object : LocationCallback() {
-        override fun onLocationResult(p0: LocationResult) {
-            super.onLocationResult(p0)
-            val mLastLocation = p0.lastLocation
-            Toast.makeText(requireContext(),"T",Toast.LENGTH_LONG).show()
-            setLocation(mLastLocation!!.latitude.toString(),mLastLocation!!.longitude.toString())
-//            first.text = mLastLocation?.latitude.toString()
-//            second.text = mLastLocation?.longitude.toString()
-
-        }
-
-    }
 
     private fun setLocation(lat: String, lon: String) {
         Log.i(TAG, "onLocationResult: $lat")
         Log.i(TAG, "onLocationResult: $lon")
-//        fusedClient.removeLocationUpdates(mCallBack)
 
     }
 
