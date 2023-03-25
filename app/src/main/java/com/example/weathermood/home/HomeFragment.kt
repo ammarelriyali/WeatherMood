@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.weathermood.databinding.FragmentHomeBinding
+import com.facebook.shimmer.ShimmerFrameLayout
 
 class HomeFragment : Fragment() {
 
@@ -34,5 +35,10 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.shimmer3.startShimmer()
     }
 }

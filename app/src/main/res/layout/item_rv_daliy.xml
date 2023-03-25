@@ -53,6 +53,7 @@
             android:id="@+id/tv_temp_daliy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="TextView"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
