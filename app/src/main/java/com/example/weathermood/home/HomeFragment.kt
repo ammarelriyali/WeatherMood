@@ -47,7 +47,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-        homeViewModel.text.observe()
 
         getLocation()
         return binding.root
