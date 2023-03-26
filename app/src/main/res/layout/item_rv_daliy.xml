@@ -19,8 +19,7 @@
             android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_daily"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_daliy_header"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            app:layout_constraintTop_toTopOf="@+id/tv_daliy_header" />
 
         <TextView
             android:id="@+id/tv_daliy_header"
@@ -29,7 +28,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="18dp"
             android:layout_marginEnd="8dp"
-            android:text="TextView"
             android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/tv_temp_daliy"
             app:layout_constraintStart_toEndOf="@+id/iv_daily"
@@ -43,7 +41,6 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="17dp"
-            android:text="TextView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tv_temp_daliy"
             app:layout_constraintStart_toEndOf="@+id/iv_daily"
@@ -54,7 +51,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="TextView"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
