@@ -44,6 +44,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private lateinit var fusedClient: FusedLocationProviderClient
 
+
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
     @RequiresApi(Build.VERSION_CODES.O)
@@ -120,11 +121,7 @@ class HomeFragment : Fragment() {
     private fun getLocationData() {
         fusedClient.getCurrentLocation(
             LocationRequest.PRIORITY_HIGH_ACCURACY,
-            object : CancellationToken() {
-                override fun onCanceledRequested(p0: OnTokenCanceledListener) =
-                    CancellationTokenSource().token
-                override fun isCancellationRequested() = false
-            })
+        null)
             .addOnSuccessListener { location: Location? ->
                 if (location == null)
                     Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT)
@@ -134,6 +131,8 @@ class HomeFragment : Fragment() {
                 }
             }
     }
+
+
 
 
     private fun setLocation(lat: String, lon: String) {
