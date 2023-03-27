@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.Serves
 import com.example.weathermood.databinding.FragmentHomeBinding
@@ -40,6 +41,9 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class HomeFragment : Fragment() {
+
+    private lateinit var lat: String
+    private lateinit var lon: String
 
     private var city: String? = null
     private val My_LOCATION_PERMISSION_ID: Int = 33
@@ -61,6 +65,8 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
+        val hourlyAdapter = HourlyAdapter()
+        val dailyAdapter = DailyAdapter()
         viewModel.response.observe(
             requireActivity()
         ) {
@@ -69,14 +75,15 @@ class HomeFragment : Fragment() {
                 if (it.body()?.city.equals("Empty"))
                     it.body()?.city = city ?: "Empty"
                 binding.tvLocationHome.text = it.body()!!.city
-                binding.tvDayConditionHome.text =
-                    getCondition(it.body()?.current?.sunrise!!, it.body()?.current?.sunset!!)
+                binding.tvDayConditionHome.text = it.body()!!.current!!.weather[0].main
+
                 binding.tvDateHome.text = getDate(it.body()?.current!!.dt)
                 binding.tvTempHome.text =
                     it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
-                binding.tvStatusHome.text = it.body()?.current!!.weather[0].main
+                binding.tvStatusHome.text = it.body()?.current!!.weather[0].description
                 binding.tvLastUpdateHome.text = "last update " + getTime(it.body()?.current!!.dt)
-
+                dailyAdapter.setData(it.body()!!.daily!!)
+                hourlyAdapter.setData(it.body()!!.hourly!!)
             } else Snackbar.make(
                 binding.root, "server is busy try again later pls", Snackbar.LENGTH_SHORT
             ).show()
@@ -93,8 +100,17 @@ class HomeFragment : Fragment() {
             binding.ivRefreshHome.setOnClickListener {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.ivRefreshHome.visibility = View.GONE
-                getLocation()
+                viewModel.getCurrentWeather(lon, lat)
             }
+        }
+        binding.rvDaliyWeatherHome.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = dailyAdapter
+        }
+        binding.rvHourlyWeatherHome.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            this.adapter = hourlyAdapter
         }
         getLocation()
         return binding.root
@@ -162,7 +178,9 @@ class HomeFragment : Fragment() {
                 val address: MutableList<Address>? =
                     location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
                 city = address?.get(0)?.countryName
-                setLocation(location!!.latitude.toString(), location!!.longitude.toString())
+                lat = location!!.latitude.toString()
+                lon = location!!.longitude.toString()
+                setLocation(lat, lon)
             }
         }
     }

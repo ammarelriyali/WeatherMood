@@ -3,7 +3,7 @@ package com.example.weathermood.model
 data class Daily(
     val clouds: Double,
     val dew_point: Double,
-    val dt: Double,
+    val dt: Long,
     val feels_like: FeelsLike,
     val humidity: Double,
     val moon_phase: Double,

@@ -7,7 +7,6 @@ data class OneCall(
     val hourly: List<Hourly>? =null,
     val lat: Double=0.0,
     val lon: Double=0.0,
-    val minutely: List<Minutely>? =null,
     val timezone: String="",
     val timezone_offset: Double=0.0,
     var city :String="Empty"
