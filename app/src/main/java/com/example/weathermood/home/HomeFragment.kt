@@ -41,7 +41,7 @@ import java.util.*
 
 class HomeFragment : Fragment() {
 
-    private var city: String?=null
+    private var city: String? = null
     private val My_LOCATION_PERMISSION_ID: Int = 33
     private val TAG: String = "TAGG"
     private var _binding: FragmentHomeBinding? = null
@@ -67,8 +67,10 @@ class HomeFragment : Fragment() {
             if (it.isSuccessful && binding != null) {
                 Log.i(TAG, "onCreateView: xxx")
                 if (it.body()?.city.equals("Empty"))
-                    it.body()?.city= city ?: "Empty"
-                binding.tvDayConditionHome.text = it.body()?.city+" ,"+ getCondition(it.body()?.current?.sunrise!!, it.body()?.current?.sunset!!)
+                    it.body()?.city = city ?: "Empty"
+                binding.tvLocationHome.text = it.body()!!.city
+                binding.tvDayConditionHome.text =
+                    getCondition(it.body()?.current?.sunrise!!, it.body()?.current?.sunset!!)
                 binding.tvDateHome.text = getDate(it.body()?.current!!.dt)
                 binding.tvTempHome.text =
                     it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
@@ -82,22 +84,30 @@ class HomeFragment : Fragment() {
                 binding.shimmerHome.stopShimmer()
                 binding.shimmerHome.visibility = View.GONE
                 binding.clHome.visibility = View.VISIBLE
+                binding.ivRefreshHome.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
             }
         }
 
-
+        if (binding != null) {
+            binding.ivRefreshHome.setOnClickListener {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.ivRefreshHome.visibility = View.GONE
+                getLocation()
+            }
+        }
         getLocation()
         return binding.root
     }
 
     private fun getCondition(sunrise: Long, sunset: Long): String {
-        var res = "night"
+        var res = "Night"
         try {
             val cmpSunrise = Date().compareTo(getTimeDate(sunrise))
             val cmpSunset = Date().compareTo(getTimeDate(sunset))
             res = when {
-                cmpSunrise > 0 && cmpSunset < 0 -> "morning"
-                else -> "night"
+                cmpSunrise > 0 && cmpSunset < 0 -> "Morning"
+                else -> "Night"
             }
         } catch (e: java.lang.Exception) {
             Log.i(TAG, "getCondition: " + e.message)
@@ -142,19 +152,19 @@ class HomeFragment : Fragment() {
         fusedClient.getCurrentLocation(
             LocationRequest.PRIORITY_HIGH_ACCURACY, null
         ).addOnSuccessListener { location: Location? ->
-                if (location == null) Toast.makeText(
-                    requireContext(),
-                    "Cannot get location.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                else {
-                    val geocoder  = Geocoder(requireContext(), Locale.getDefault())
-                    val address: MutableList<Address>? =
-                        location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
-                    city= address?.get(0)?.countryName
-                    setLocation(location!!.latitude.toString(), location!!.longitude.toString())
-                }
+            if (location == null) Toast.makeText(
+                requireContext(),
+                "Cannot get location.",
+                Toast.LENGTH_SHORT
+            ).show()
+            else {
+                val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                val address: MutableList<Address>? =
+                    location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
+                city = address?.get(0)?.countryName
+                setLocation(location!!.latitude.toString(), location!!.longitude.toString())
             }
+        }
     }
 
 
