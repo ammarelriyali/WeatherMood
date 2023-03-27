@@ -9,7 +9,8 @@ data class OneCall(
     val lon: Double=0.0,
     val minutely: List<Minutely>? =null,
     val timezone: String="",
-    val timezone_offset: Int=0
+    val timezone_offset: Double=0.0,
+    var city :String="Empty"
 ):java.io.Serializable{
 
 }

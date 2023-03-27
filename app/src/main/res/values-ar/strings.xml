@@ -7,4 +7,5 @@
     <string name="app_name_nav">حالة الطقس</string>
     <string name="menu_setting">الظبط</string>
     <string name="daily">Daliy</string>
+    <string name="hourly">الساعات القادمة</string>
 </resources>

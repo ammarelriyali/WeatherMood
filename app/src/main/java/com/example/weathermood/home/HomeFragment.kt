@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -39,6 +41,7 @@ import java.util.*
 
 class HomeFragment : Fragment() {
 
+    private var city: String?=null
     private val My_LOCATION_PERMISSION_ID: Int = 33
     private val TAG: String = "TAGG"
     private var _binding: FragmentHomeBinding? = null
@@ -47,11 +50,10 @@ class HomeFragment : Fragment() {
 
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val myFactory = HomeViewFactory(Repository(LocalDataClass(requireContext()), Serves()))
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
@@ -59,20 +61,24 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-
-
-        viewModel.response.observe(requireActivity()
+        viewModel.response.observe(
+            requireActivity()
         ) {
-            if (it.isSuccessful&&binding != null) {
+            if (it.isSuccessful && binding != null) {
                 Log.i(TAG, "onCreateView: xxx")
-                    binding.tvTimeHome.text = getDateTime(it.body()?.current!!.dt)
-            } else
-                Snackbar.make(
-                    binding.root,
-                    "server is busy try again later pls",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            if (binding!=null) {
+                if (it.body()?.city.equals("Empty"))
+                    it.body()?.city= city ?: "Empty"
+                binding.tvDayConditionHome.text = it.body()?.city+" ,"+ getCondition(it.body()?.current?.sunrise!!, it.body()?.current?.sunset!!)
+                binding.tvDateHome.text = getDate(it.body()?.current!!.dt)
+                binding.tvTempHome.text =
+                    it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
+                binding.tvStatusHome.text = it.body()?.current!!.weather[0].main
+                binding.tvLastUpdateHome.text = "last update " + getTime(it.body()?.current!!.dt)
+
+            } else Snackbar.make(
+                binding.root, "server is busy try again later pls", Snackbar.LENGTH_SHORT
+            ).show()
+            if (binding != null) {
                 binding.shimmerHome.stopShimmer()
                 binding.shimmerHome.visibility = View.GONE
                 binding.clHome.visibility = View.VISIBLE
@@ -84,6 +90,21 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private fun getCondition(sunrise: Long, sunset: Long): String {
+        var res = "night"
+        try {
+            val cmpSunrise = Date().compareTo(getTimeDate(sunrise))
+            val cmpSunset = Date().compareTo(getTimeDate(sunset))
+            res = when {
+                cmpSunrise > 0 && cmpSunset < 0 -> "morning"
+                else -> "night"
+            }
+        } catch (e: java.lang.Exception) {
+            Log.i(TAG, "getCondition: " + e.message)
+        }
+        return res
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -91,8 +112,8 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.clHome.visibility=View.GONE
-        binding.shimmerHome.visibility=View.VISIBLE
+        binding.clHome.visibility = View.GONE
+        binding.shimmerHome.visibility = View.VISIBLE
         binding.shimmerHome.startShimmer()
     }
 
@@ -113,26 +134,28 @@ class HomeFragment : Fragment() {
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
             }
-        } else
-            askForPermissions()
+        } else askForPermissions()
     }
 
     @SuppressLint("MissingPermission")
     private fun getLocationData() {
         fusedClient.getCurrentLocation(
-            LocationRequest.PRIORITY_HIGH_ACCURACY,
-        null)
-            .addOnSuccessListener { location: Location? ->
-                if (location == null)
-                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT)
-                        .show()
+            LocationRequest.PRIORITY_HIGH_ACCURACY, null
+        ).addOnSuccessListener { location: Location? ->
+                if (location == null) Toast.makeText(
+                    requireContext(),
+                    "Cannot get location.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 else {
+                    val geocoder  = Geocoder(requireContext(), Locale.getDefault())
+                    val address: MutableList<Address>? =
+                        location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
+                    city= address?.get(0)?.countryName
                     setLocation(location!!.latitude.toString(), location!!.longitude.toString())
                 }
             }
     }
-
-
 
 
     private fun setLocation(lat: String, lon: String) {
@@ -144,25 +167,18 @@ class HomeFragment : Fragment() {
 
     private fun askForPermissions() {
         ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ),
-            My_LOCATION_PERMISSION_ID
+            requireActivity(), arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
+            ), My_LOCATION_PERMISSION_ID
         )
     }
 
     private fun checkPermissions(): Boolean {
         var result = false
         if ((ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) ==
-                    PackageManager.PERMISSION_GRANTED) &&
-            (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED)
         ) {
             result = true
@@ -171,19 +187,39 @@ class HomeFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == My_LOCATION_PERMISSION_ID)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocation()
-            }
+        if (requestCode == My_LOCATION_PERMISSION_ID) if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getLocation()
+        }
     }
-    private fun getDateTime(s: Long): String? {
+
+    private fun getTime(s: Long): String? {
         try {
             val sdf = SimpleDateFormat("hh.mm a")
+            val netDate = Date(s * 1000)
+            return sdf.format(netDate)
+        } catch (e: Exception) {
+            return e.toString()
+        }
+    }
+
+    private fun getTimeDate(s: Long): Date? {
+        try {
+            val netDate = Date(s * 1000)
+            return netDate
+        } catch (e: Exception) {
+            Log.i(TAG, "getTimeDate: " + e.message)
+            return null
+
+        }
+    }
+
+    private fun getDate(s: Long): String? {
+        try {
+            Log.i(TAG, "getDate: " + s)
+            val sdf = SimpleDateFormat("d MMMM YYYY ")
             val netDate = Date(s * 1000)
             return sdf.format(netDate)
         } catch (e: Exception) {
