@@ -20,6 +20,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+<<<<<<< Updated upstream
+=======
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+>>>>>>> Stashed changes
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.Serves
 import com.example.weathermood.databinding.FragmentHomeBinding
@@ -31,6 +37,8 @@ import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -63,6 +71,7 @@ class HomeFragment : Fragment() {
 
         viewModel.response.observe(requireActivity()
         ) {
+<<<<<<< Updated upstream
             if (it.isSuccessful&&binding != null) {
                 Log.i(TAG, "onCreateView: xxx")
                     binding.tvTimeHome.text = getDateTime(it.body()?.current!!.dt)
@@ -73,6 +82,32 @@ class HomeFragment : Fragment() {
                     Snackbar.LENGTH_SHORT
                 ).show()
             if (binding!=null) {
+=======
+            if (it.isSuccessful && binding != null) {
+                if (it.body()?.city.equals("Empty"))
+                    it.body()?.city = city ?: "Empty"
+                binding.tvLocationHome.text = it.body()!!.city
+                binding.tvDayConditionHome.text = it.body()!!.current!!.weather[0].main
+
+                binding.tvDateHome.text = getDate(it.body()?.current!!.dt)
+                binding.tvTempHome.text =
+                    it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
+                binding.tvStatusHome.text = it.body()?.current!!.weather[0].description
+                binding.tvLastUpdateHome.text = "last update "+getTime(it.body()?.current!!.dt)
+                dailyAdapter.setData(it.body()!!.daily!!)
+                hourlyAdapter.setData(it.body()!!.hourly!!)
+                Log.i(TAG, "onCreateView: ${it.body()!!.current!!.weather[0].icon}")
+                Glide.with(requireContext()).load(resources.getDrawable(Helper.image.get(it.body()!!.current!!.weather[0].icon)!!,context?.theme))
+                    .error(requireContext().getDrawable(com.example.weathermood.R.drawable.twotone_error_24)).into(binding.ivIconHome)
+                binding.tvHumidityHome.text=it.body()!!.current?.humidity.toString()+" %"
+                binding.tvWindSpeedHome.text=it.body()!!.current?.wind_speed.toString()+" m/s"  //check about the وحده
+                binding.tvPressureHome.text=it.body()!!.current?.pressure.toString()+" hPa"
+                binding.tvCloudsHome.text=it.body()!!.current?.clouds.toString()+" %"
+            } else Snackbar.make(
+                binding.root, "server is busy try again later pls", Snackbar.LENGTH_SHORT
+            ).show()
+            if (binding != null) {
+>>>>>>> Stashed changes
                 binding.shimmerHome.stopShimmer()
                 binding.shimmerHome.visibility = View.GONE
                 binding.clHome.visibility = View.VISIBLE
@@ -120,6 +155,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun getLocationData() {
         fusedClient.getCurrentLocation(
+<<<<<<< Updated upstream
             LocationRequest.PRIORITY_HIGH_ACCURACY,
         null)
             .addOnSuccessListener { location: Location? ->
@@ -129,6 +165,26 @@ class HomeFragment : Fragment() {
                 else {
                     setLocation(location!!.latitude.toString(), location!!.longitude.toString())
                 }
+=======
+            LocationRequest.PRIORITY_HIGH_ACCURACY, null
+        ).addOnSuccessListener { location: Location? ->
+            if (location == null) Toast.makeText(
+                requireContext(),
+                "Cannot get location.",
+                Toast.LENGTH_SHORT
+            ).show()
+            else {
+                lifecycleScope.launch (Dispatchers.IO){
+                    val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                    val address: MutableList<Address>? =
+                        location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
+                    city = address?.get(0)?.countryName
+                    lat = location!!.latitude.toString()
+                    lon = location!!.longitude.toString()
+                    setLocation(lat, lon)
+                }
+
+>>>>>>> Stashed changes
             }
     }
 

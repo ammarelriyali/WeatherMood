@@ -1,6 +1,7 @@
 package com.example.weathermood.model
 
 data class Daily(
+<<<<<<< Updated upstream
     val clouds: Int,
     val dew_point: Double,
     val dt: Int,
@@ -14,9 +15,16 @@ data class Daily(
     val rain: Double,
     val sunrise: Int,
     val sunset: Int,
+=======
+    val dt: Long,
+    val feels_like: FeelsLike,
+>>>>>>> Stashed changes
     val temp: Temp,
-    val uvi: Double,
     val weather: List<Weather>,
+<<<<<<< Updated upstream
     val wind_deg: Int,
     val wind_speed: Double
 )
+=======
+):java.io.Serializable
+>>>>>>> Stashed changes

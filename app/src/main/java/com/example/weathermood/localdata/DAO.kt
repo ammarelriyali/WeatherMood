@@ -1,15 +1,18 @@
-package com.example.createrecwithkotlin.DB
 
+package com.example.weathermood.localdata
 import androidx.room.*
 import com.example.weathermood.model.OneCall
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(oneCall : OneCall):Long
+    fun insert(oneCall : OneCall):Long
+    @Query("Select * from OneCall WHERE isHome=true ")
+    fun getCall(): Flow<OneCall>
 
-//
-//    @Query("SELECT * FROM product")
-//    suspend fun getPorduct(): List<Product>
+
+
+
 }
