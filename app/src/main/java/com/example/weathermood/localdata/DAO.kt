@@ -1,18 +1,18 @@
 
 package com.example.weathermood.localdata
 import androidx.room.*
-import com.example.weathermood.model.OneCall
+import com.example.weathermood.model.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DAO {
 
+
+    @Query("Select * from OneCallHome")
+    fun getCall(): Flow<List<OneCallHome>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(oneCall : OneCall):Flow<Long>
-    @Query("Select * from OneCall WHERE isHome=true ")
-    fun getCall(): Flow<List<OneCall>>
-
-
+    suspend fun  insert(oneCall: OneCallHome)
 
 
 }

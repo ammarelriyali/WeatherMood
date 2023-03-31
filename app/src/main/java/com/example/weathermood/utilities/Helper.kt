@@ -7,11 +7,11 @@ class Helper{
         val image = mapOf(Pair("01d",R.drawable.sun)
         ,Pair("01n",R.drawable.night)
 
-        ,Pair("02n",R.drawable.cloudy_night)
-        ,Pair("02d",R.drawable.cloudy_day)
+        ,Pair("03n",R.drawable.cloud_home)
+        ,Pair("03d",R.drawable.cloud_home)
 
-        ,Pair("03n",R.drawable.cloud)
-        ,Pair("03d",R.drawable.cloud)
+        ,Pair("02d",R.drawable.cloud_day)
+        ,Pair("02n",R.drawable.cloud_night)
 
         ,Pair("04d",R.drawable.cloudy_scattered)
         ,Pair("04n",R.drawable.cloudy_scattered)

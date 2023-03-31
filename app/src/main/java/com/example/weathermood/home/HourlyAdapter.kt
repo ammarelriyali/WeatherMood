@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weathermood.databinding.ItemRvDaliyBinding
@@ -34,8 +35,8 @@ class HourlyAdapter(private var hourly: List<Hourly> = listOf<Hourly>(),
     override fun onBindViewHolder(holder: HourlyAdapter.ViewHolder, position: Int) {
         holder.binding.tvTimeHourly.text=getDate(hourly[position].dt)
         holder.binding.tvTempHourly.text=hourly[position].temp.toString()+ '\u00B0'.toString()
-        Glide.with(context).load(context.getDrawable(Helper.image.get(hourly[position].weather[0].icon)!!))
-            .error(context.getDrawable(com.example.weathermood.R.drawable.twotone_error_24)).into(holder.binding.ivHourly)
+        Glide.with(context).load(AppCompatResources.getDrawable(context,Helper.image.get(hourly[position].weather[0].icon)!!))
+            .error(AppCompatResources.getDrawable(context,com.example.weathermood.R.drawable.twotone_error_24)).into(holder.binding.ivHourly)
 
     }
 

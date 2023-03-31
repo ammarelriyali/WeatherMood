@@ -9,7 +9,8 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -17,13 +18,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.Serves
@@ -31,25 +34,21 @@ import com.example.weathermood.databinding.FragmentHomeBinding
 import com.example.weathermood.home.mvvvm.HomeViewFactory
 import com.example.weathermood.home.mvvvm.HomeViewModel
 import com.example.weathermood.home.repository.Repository
+import com.example.weathermood.model.OneCall
+import com.example.weathermood.model.OneCallHome
 import com.example.weathermood.utilities.Helper
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.CancellationToken
-import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.material.snackbar.Snackbar
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+
 import java.util.*
 
 class HomeFragment : Fragment() {
 
-    private lateinit var lon: String
-    private lateinit var lat: String
-    private var city: String?=null
+    private var city: String? = null
     private val My_LOCATION_PERMISSION_ID: Int = 33
     private val TAG: String = "TAGG"
     private var _binding: FragmentHomeBinding? = null
@@ -58,7 +57,11 @@ class HomeFragment : Fragment() {
 
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
-    @RequiresApi(Build.VERSION_CODES.O)
+
+
+    private val dailyAdapter = DailyAdapter()
+    private val hourlyAdapter = HourlyAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,67 +72,120 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        if (!checkPermissions())
+            askForPermissions()
 
-        val dailyAdapter = DailyAdapter()
-        val hourlyAdapter = HourlyAdapter()
-
-        viewModel.response.observe(requireActivity()
-        ) {
-
-            if (it.isSuccessful && binding != null) {
-                if (it.body()?.city.equals("Empty"))
-                    it.body()?.city = city ?: "Empty"
-                binding.tvLocationHome.text = it.body()!!.city
-
-                binding.tvDateHome.text = getDate(it.body()?.current!!.dt)
-                binding.tvTempHome.text =
-                    it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
-                binding.tvStatusHome.text = it.body()?.current!!.weather[0].description
-                binding.tvLastUpdateHome.text = "last update "+ getTime(it.body()?.current!!.dt)
-
-                dailyAdapter.setData(it.body()!!.daily!!)
-                hourlyAdapter.setData(it.body()!!.hourly!!)
-                Log.i(TAG, "onCreateView: ${it.body()!!.current!!.weather[0].icon}")
-                Glide.with(requireContext()).load(resources.getDrawable(Helper.image.get(it.body()!!.current!!.weather[0].icon)!!,context?.theme))
-                    .error(requireContext().getDrawable(com.example.weathermood.R.drawable.twotone_error_24)).into(binding.ivIconHome)
-                binding.tvHumidityHome.text=it.body()!!.current?.humidity.toString()+" %"
-                binding.tvWindSpeedHome.text=it.body()!!.current?.wind_speed.toString()+" m/s"  //check about the وحده
-                binding.tvPressureHome.text=it.body()!!.current?.pressure.toString()+" hPa"
-                binding.tvCloudsHome.text=it.body()!!.current?.clouds.toString()+" %"
-                binding.rvHourlyWeatherHome.apply {
-                    adapter=hourlyAdapter
-                    layoutManager=LinearLayoutManager(requireContext())
+        binding.rvHourlyWeatherHome.apply {
+            adapter = hourlyAdapter
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        }
+        binding.rvDaliyWeatherHome.apply {
+            adapter = dailyAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        binding.ivRefreshHome.setOnClickListener(){
+            binding.progressBar.visibility=View.VISIBLE
+            binding.ivRefreshHome.visibility=View.GONE
+            getLocationOnline()
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.response.collect() {
+                when (it) {
+                    is ResponseState.SuccessApi -> {
+                        setData(it.data)
+                        viewModel.insertCall(OneCallHome(oneCall = it.data).apply {
+                            this.city= this@HomeFragment.city ?: "Empty"
+                        })
+                        disableShimmer()
+                    }
+                    is ResponseState.Success -> {
+                        this@HomeFragment.city=it.data.city
+                        setData(it.data.oneCall)
+                        disableShimmer()
+                    }
+                    is ResponseState.Failure -> {
+                        Log.i(TAG, "onCreate: ${it.msg}")
+                        disableShimmer()
+                    }
+                    is ResponseState.FailureResponse -> {
+                        Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"the server had issue pls try later",Snackbar.LENGTH_LONG).show()
+                        disableShimmer()
+                    }
+                    else -> {
+                        enableShimmer()
+                    }
                 }
-                binding.rvDaliyWeatherHome.apply {
-                    adapter=dailyAdapter
-                    layoutManager=LinearLayoutManager(requireContext())
-                }
-
-            } else Snackbar.make(
-                binding.root, "server is busy try again later pls", Snackbar.LENGTH_SHORT
-            ).show()
-            if (binding != null) {
-                binding.shimmerHome.stopShimmer()
-                binding.shimmerHome.visibility = View.GONE
-                binding.clHome.visibility = View.VISIBLE
             }
         }
 
-
-        getLocation()
         return binding.root
+    }
+
+    private fun getLocationOnline() {
+        if (isOnline())
+            getLocation()
+        else{
+            Snackbar.make(requireActivity().findViewById(android.R.id.content),"please open internet",Snackbar.LENGTH_LONG).show()
+            Log.i(TAG, "getLocationOnline: ")
+            disableShimmer()
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getWeather()
+        getLocationOnline()
+    }
+
+    private fun setData(data: OneCall) {
+
+        binding.tvLocationHome.text = city
+
+        binding.tvDateHome.text = getDate(data.current!!.dt)
+        binding.tvTempHome.text =
+            data.current!!.temp.toString() + '\u00B0'.toString() + "K"
+        binding.tvStatusHome.text = data.current!!.weather[0].description
+        binding.tvLastUpdateHome.text =
+            "last update " + getTime(data.current!!.dt)
+
+        dailyAdapter.setData(data.daily!!)
+        hourlyAdapter.setData(data.hourly!!)
+        Glide.with(requireContext()).load(
+            AppCompatResources.getDrawable(requireContext(),
+                Helper.image.get(data.current!!.weather[0].icon)!!
+            )
+        )
+            .error(AppCompatResources.getDrawable(requireContext(),com.example.weathermood.R.drawable.twotone_error_24))
+            .into(binding.ivIconHome)
+        binding.tvHumidityHome.text = data.current?.humidity.toString() + " %"
+        binding.tvWindSpeedHome.text =
+            data.current?.wind_speed.toString() + " m/s"  //check about the وحده
+        binding.tvPressureHome.text = data.current?.pressure.toString() + " hPa"
+        binding.tvCloudsHome.text = data.current?.clouds.toString() + " %"
+    }
+
+    private fun enableShimmer() {
+        binding.clHome.visibility = View.GONE
+        binding.shimmerHome.visibility = View.VISIBLE
+        binding.shimmerHome.startShimmer()
+
+
+    }
+
+    private fun disableShimmer() {
+        binding.shimmerHome.stopShimmer()
+        binding.shimmerHome.visibility = View.GONE
+        binding.clHome.visibility = View.VISIBLE
+        binding.ivRefreshHome.visibility= View.VISIBLE
+        binding.progressBar.visibility= View.GONE
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.clHome.visibility=View.GONE
-        binding.shimmerHome.visibility=View.VISIBLE
-        binding.shimmerHome.startShimmer()
     }
 
     private fun enableLocation(): Boolean {
@@ -147,7 +203,6 @@ class HomeFragment : Fragment() {
             } else {
                 Toast.makeText(context, "enable location ", Toast.LENGTH_LONG).show()
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-
             }
         } else
             askForPermissions()
@@ -165,13 +220,17 @@ class HomeFragment : Fragment() {
             ).show()
             else {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                    val address: MutableList<Address>? =
-                        location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
-                    city = address?.get(0)?.countryName
-                    lat = location!!.latitude.toString()
-                    lon = location!!.longitude.toString()
-                    setLocation(lat, lon)
+                    try {
+
+
+                        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                        val address: MutableList<Address>? =
+                            location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
+                        city = address?.get(0)?.getAddressLine(0)!!.split(",")[1]
+                        setLocation(location.latitude.toString(), location.longitude.toString())
+                    }catch (e:java.lang.Exception){
+                        Log.i(TAG, "getLocationData: ${e.message}")
+                    }
                 }
 
             }
@@ -226,6 +285,7 @@ class HomeFragment : Fragment() {
                 getLocation()
             }
     }
+
     private fun getTime(s: Long): String? {
         try {
             val sdf = SimpleDateFormat("h.m a")
@@ -235,15 +295,36 @@ class HomeFragment : Fragment() {
             return e.toString()
         }
     }
-        private fun getDate(s: Long): String? {
+
+    private fun getDate(s: Long): String? {
         try {
-            val sdf = SimpleDateFormat("WW MM YYYY")
+            val sdf = SimpleDateFormat("dd MMMM YYYY")
             val netDate = Date(s * 1000)
             return sdf.format(netDate)
         } catch (e: Exception) {
             return e.toString()
         }
     }
-
+    fun isOnline(): Boolean {
+        val connectivityManager =
+            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
 }

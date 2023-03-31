@@ -1,11 +1,12 @@
 package com.example.mvvm.DB
 
 import com.example.weathermood.model.OneCall
+import com.example.weathermood.model.OneCallHome
 import kotlinx.coroutines.flow.Flow
 
 
 interface LocalData{
-     fun insertCall(oneCall: OneCall):Flow<Long>
-    fun getCall(): Flow<List<OneCall>>
+     suspend fun insertCall(oneCall: OneCallHome)
+    fun getCall(): Flow<List<OneCallHome>>
 
 }
