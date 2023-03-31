@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 class LocalDataClass(context:Context) : LocalData {
     var dao: DAO = WeatherDB.getInstance(context).getDao()
 
-    override suspend fun insertCall(oneCall:OneCall):Long{
+    override  fun insertCall(oneCall:OneCall):Flow<Long>{
         return dao.insert(oneCall)
     }
 
-    override  fun getCall():Flow<OneCall> {
+    override  fun getCall():Flow<List<OneCall>> {
        return dao.getCall()
     }
 

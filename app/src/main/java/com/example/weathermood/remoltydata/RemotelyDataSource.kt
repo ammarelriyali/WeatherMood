@@ -1,13 +1,14 @@
 package com.example.weathermood.remoltydata
 
 import com.example.weathermood.model.OneCall
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 
 interface RemotelyDataSource {
-    suspend fun getCurrentLocation(log: String, lat: String, unit: String , lang: String
-    ):Response<OneCall>
+     fun getCurrentLocation(log: String, lat: String, unit: String , lang: String
+    ): Flow<Response<OneCall>>
 
-    suspend fun getAlerts(log: String, lat: String, unit: String , lang: String
-    ): Response<OneCall>
+    fun getAlerts(log: String, lat: String, unit: String , lang: String
+    ): Flow<Response<OneCall>>
 }

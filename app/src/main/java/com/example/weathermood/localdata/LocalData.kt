@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface LocalData{
-    suspend fun insertCall(oneCall: OneCall):Long
-    fun getCall(): Flow<OneCall>
+     fun insertCall(oneCall: OneCall):Flow<Long>
+    fun getCall(): Flow<List<OneCall>>
 
 }

@@ -70,7 +70,8 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-
+        val dailyAdapter = DailyAdapter()
+        val hourlyAdapter = HourlyAdapter()
 
         viewModel.response.observe(requireActivity()
         ) {
@@ -85,8 +86,7 @@ class HomeFragment : Fragment() {
                     it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
                 binding.tvStatusHome.text = it.body()?.current!!.weather[0].description
                 binding.tvLastUpdateHome.text = "last update "+ getTime(it.body()?.current!!.dt)
-                val dailyAdapter = DailyAdapter()
-                val hourlyAdapter = HourlyAdapter()
+
                 dailyAdapter.setData(it.body()!!.daily!!)
                 hourlyAdapter.setData(it.body()!!.hourly!!)
                 Log.i(TAG, "onCreateView: ${it.body()!!.current!!.weather[0].icon}")
@@ -96,6 +96,15 @@ class HomeFragment : Fragment() {
                 binding.tvWindSpeedHome.text=it.body()!!.current?.wind_speed.toString()+" m/s"  //check about the وحده
                 binding.tvPressureHome.text=it.body()!!.current?.pressure.toString()+" hPa"
                 binding.tvCloudsHome.text=it.body()!!.current?.clouds.toString()+" %"
+                binding.rvHourlyWeatherHome.apply {
+                    adapter=hourlyAdapter
+                    layoutManager=LinearLayoutManager(requireContext())
+                }
+                binding.rvDaliyWeatherHome.apply {
+                    adapter=dailyAdapter
+                    layoutManager=LinearLayoutManager(requireContext())
+                }
+
             } else Snackbar.make(
                 binding.root, "server is busy try again later pls", Snackbar.LENGTH_SHORT
             ).show()

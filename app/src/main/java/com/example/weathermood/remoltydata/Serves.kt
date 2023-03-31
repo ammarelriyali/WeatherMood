@@ -5,22 +5,29 @@ import com.example.createrecwithkotlin.retroit.ApiInterface
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.remoltydata.RemotelyDataSource
 import com.example.weathermood.remoltydata.RetrofitClient
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import retrofit2.Response
 
 
 class Serves : RemotelyDataSource {
-    val api:ApiInterface
-   init {
-       api = RetrofitClient.getInstance().create(ApiInterface::class.java)
-   }
+    val api: ApiInterface
 
-    override suspend fun getCurrentLocation(lon:String, lat:String, unit:String, lang:String
-    ):Response<OneCall>{
-        return api.getCurrentWeather(lat,lon,unit,lang)
+    init {
+        api = RetrofitClient.getInstance().create(ApiInterface::class.java)
     }
-    override suspend fun getAlerts(log:String, lat:String, unit:String, lang:String
-    ): Response<OneCall> {
-        return api.getAlerts(lat,log,unit,lang)
+
+    override fun getCurrentLocation(
+        lon: String, lat: String, unit: String, lang: String
+    ): Flow<Response<OneCall>> {
+        return flow { emit(api.getCurrentWeather(lat, lon, unit, lang)) }
+    }
+
+    override fun getAlerts(
+        log: String, lat: String, unit: String, lang: String
+    ): Flow<Response<OneCall>> {
+        return flow{ emit(api.getAlerts(lat, log, unit, lang))}
     }
 
 }

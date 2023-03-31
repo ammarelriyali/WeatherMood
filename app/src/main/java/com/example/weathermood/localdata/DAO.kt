@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
 interface DAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(oneCall : OneCall):Long
+    fun insert(oneCall : OneCall):Flow<Long>
     @Query("Select * from OneCall WHERE isHome=true ")
-    fun getCall(): Flow<OneCall>
+    fun getCall(): Flow<List<OneCall>>
 
 
 
