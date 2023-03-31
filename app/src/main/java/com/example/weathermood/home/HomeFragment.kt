@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -20,18 +22,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-<<<<<<< Updated upstream
-=======
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
->>>>>>> Stashed changes
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.Serves
 import com.example.weathermood.databinding.FragmentHomeBinding
 import com.example.weathermood.home.mvvvm.HomeViewFactory
 import com.example.weathermood.home.mvvvm.HomeViewModel
 import com.example.weathermood.home.repository.Repository
+import com.example.weathermood.utilities.Helper
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -47,6 +47,9 @@ import java.util.*
 
 class HomeFragment : Fragment() {
 
+    private lateinit var lon: String
+    private lateinit var lat: String
+    private var city: String?=null
     private val My_LOCATION_PERMISSION_ID: Int = 33
     private val TAG: String = "TAGG"
     private var _binding: FragmentHomeBinding? = null
@@ -71,29 +74,19 @@ class HomeFragment : Fragment() {
 
         viewModel.response.observe(requireActivity()
         ) {
-<<<<<<< Updated upstream
-            if (it.isSuccessful&&binding != null) {
-                Log.i(TAG, "onCreateView: xxx")
-                    binding.tvTimeHome.text = getDateTime(it.body()?.current!!.dt)
-            } else
-                Snackbar.make(
-                    binding.root,
-                    "server is busy try again later pls",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            if (binding!=null) {
-=======
+
             if (it.isSuccessful && binding != null) {
                 if (it.body()?.city.equals("Empty"))
                     it.body()?.city = city ?: "Empty"
                 binding.tvLocationHome.text = it.body()!!.city
-                binding.tvDayConditionHome.text = it.body()!!.current!!.weather[0].main
 
                 binding.tvDateHome.text = getDate(it.body()?.current!!.dt)
                 binding.tvTempHome.text =
                     it.body()?.current!!.temp.toString() + '\u00B0'.toString() + "K"
                 binding.tvStatusHome.text = it.body()?.current!!.weather[0].description
-                binding.tvLastUpdateHome.text = "last update "+getTime(it.body()?.current!!.dt)
+                binding.tvLastUpdateHome.text = "last update "+ getTime(it.body()?.current!!.dt)
+                val dailyAdapter = DailyAdapter()
+                val hourlyAdapter = HourlyAdapter()
                 dailyAdapter.setData(it.body()!!.daily!!)
                 hourlyAdapter.setData(it.body()!!.hourly!!)
                 Log.i(TAG, "onCreateView: ${it.body()!!.current!!.weather[0].icon}")
@@ -107,7 +100,6 @@ class HomeFragment : Fragment() {
                 binding.root, "server is busy try again later pls", Snackbar.LENGTH_SHORT
             ).show()
             if (binding != null) {
->>>>>>> Stashed changes
                 binding.shimmerHome.stopShimmer()
                 binding.shimmerHome.visibility = View.GONE
                 binding.clHome.visibility = View.VISIBLE
@@ -155,17 +147,6 @@ class HomeFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun getLocationData() {
         fusedClient.getCurrentLocation(
-<<<<<<< Updated upstream
-            LocationRequest.PRIORITY_HIGH_ACCURACY,
-        null)
-            .addOnSuccessListener { location: Location? ->
-                if (location == null)
-                    Toast.makeText(requireContext(), "Cannot get location.", Toast.LENGTH_SHORT)
-                        .show()
-                else {
-                    setLocation(location!!.latitude.toString(), location!!.longitude.toString())
-                }
-=======
             LocationRequest.PRIORITY_HIGH_ACCURACY, null
         ).addOnSuccessListener { location: Location? ->
             if (location == null) Toast.makeText(
@@ -174,7 +155,7 @@ class HomeFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
             else {
-                lifecycleScope.launch (Dispatchers.IO){
+                lifecycleScope.launch(Dispatchers.IO) {
                     val geocoder = Geocoder(requireContext(), Locale.getDefault())
                     val address: MutableList<Address>? =
                         location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
@@ -184,11 +165,10 @@ class HomeFragment : Fragment() {
                     setLocation(lat, lon)
                 }
 
->>>>>>> Stashed changes
             }
+        }
+
     }
-
-
 
 
     private fun setLocation(lat: String, lon: String) {
@@ -237,9 +217,18 @@ class HomeFragment : Fragment() {
                 getLocation()
             }
     }
-    private fun getDateTime(s: Long): String? {
+    private fun getTime(s: Long): String? {
         try {
-            val sdf = SimpleDateFormat("hh.mm a")
+            val sdf = SimpleDateFormat("h.m a")
+            val netDate = Date(s * 1000)
+            return sdf.format(netDate)
+        } catch (e: Exception) {
+            return e.toString()
+        }
+    }
+        private fun getDate(s: Long): String? {
+        try {
+            val sdf = SimpleDateFormat("WW MM YYYY")
             val netDate = Date(s * 1000)
             return sdf.format(netDate)
         } catch (e: Exception) {
