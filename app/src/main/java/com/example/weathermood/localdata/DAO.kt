@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DAO {
-
-
     @Query("Select * from OneCallHome")
     fun getCall(): Flow<List<OneCallHome>>
 

@@ -1,5 +1,6 @@
 package com.example.weathermood.home.mvvvm
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weathermood.home.ResponseState
@@ -17,6 +18,7 @@ class HomeViewModel(val repository: IRepository) : ViewModel() {
     private var _oneCall: MutableStateFlow<ResponseState> = MutableStateFlow(ResponseState.Loading)
     val response: MutableStateFlow<ResponseState> = _oneCall
     fun getCurrentWeather(lon: String, lat: String, unit: String = "default", lang: String = "en") {
+        Log.i(TAG, "getCurrentWeather: ")
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCurrentLocation(lon, lat, unit, lang)
                 .catch { _oneCall.value=ResponseState.Failure(it) }
@@ -32,9 +34,9 @@ class HomeViewModel(val repository: IRepository) : ViewModel() {
     }
         fun getWeather() {
             viewModelScope.launch(Dispatchers.IO) {
+                Log.i(TAG, "getWeather: ")
                 repository.getWeather().catch { _oneCall.value=ResponseState.Failure(it) }
                     .collect() {
-                        delay(1000)
                         if (it.isNotEmpty())
                             _oneCall.value = ResponseState.Success(it.get(0))
                         else
@@ -46,6 +48,7 @@ class HomeViewModel(val repository: IRepository) : ViewModel() {
         }
 
         fun insertCall(oneCall: OneCallHome) {
+            Log.i(TAG, "insertCall: ")
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     repository.setWeather(oneCall)

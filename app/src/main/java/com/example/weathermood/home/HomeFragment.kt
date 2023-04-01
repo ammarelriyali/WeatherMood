@@ -72,6 +72,7 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
         if (!checkPermissions())
             askForPermissions()
 
@@ -221,8 +222,6 @@ class HomeFragment : Fragment() {
             else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-
-
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
                         val address: MutableList<Address>? =
                             location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
