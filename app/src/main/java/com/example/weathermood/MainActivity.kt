@@ -1,15 +1,20 @@
 package com.example.weathermood
 
 import android.os.Bundle
-import com.google.android.material.navigation.NavigationView
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
 import com.example.weathermood.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
+import java.util.*
+import java.util.function.IntPredicate
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content)
 
+        val dialogsIds = intArrayOf(
+            R.id.action_nav_home_to_maps_fragment,
+            R.id.action_nav_favourite_to_maps_fragment
+            )
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_favourite, R.id.nav_alert,R.id.nav_setting
@@ -36,6 +46,16 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { navController: NavController?, navDestination: NavDestination, bundle: Bundle? ->
+            val isMatch: Boolean = Arrays.stream(dialogsIds).anyMatch(
+                 { id: Int -> navDestination.id == id })
+                setVisibilityToolbar(isMatch)
+        }
+    }
+
+    private fun setVisibilityToolbar(show:Boolean) {
+       binding.appBar.toolbar.visibility= View.GONE
     }
 
     override fun onSupportNavigateUp(): Boolean {

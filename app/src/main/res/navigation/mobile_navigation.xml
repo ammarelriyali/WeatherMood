@@ -9,13 +9,21 @@
         android:id="@+id/nav_home"
         android:name="com.example.weathermood.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_maps_fragment"
+            app:destination="@id/maps_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_favourite"
         android:name="com.example.weathermood.gallery.GalleryFragment"
         android:label="@string/menu_favourite"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_gallery" >
+        <action
+            android:id="@+id/action_nav_favourite_to_maps_fragment"
+            app:destination="@id/maps_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_alert"
@@ -24,7 +32,12 @@
         tools:layout="@layout/fragment_slideshow" />
     <fragment
         android:id="@+id/nav_setting"
-        android:name="com.example.weathermood.Setting.SettingFragment"
+        android:name="com.example.weathermood.setting.SettingFragment"
         android:label="@string/menu_setting"
         tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/maps_fragment"
+        android:name="com.example.weathermood.map.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" />
 </navigation>

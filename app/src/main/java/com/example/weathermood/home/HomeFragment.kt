@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -67,6 +68,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        findNavController().navigate(com.example.weathermood.R.id.action_nav_home_to_maps_fragment)
         val myFactory = HomeViewFactory(Repository(LocalDataClass(requireContext()), Serves()))
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 
@@ -89,7 +91,8 @@ class HomeFragment : Fragment() {
             binding.ivRefreshHome.visibility=View.GONE
             getLocationOnline()
         }
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenResumed {
+
             viewModel.response.collect() {
                 when (it) {
                     is ResponseState.SuccessApi -> {
