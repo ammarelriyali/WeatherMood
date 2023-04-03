@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView3"
     android:layout_width="match_parent"
-    android:layout_height="1200dp"
+    android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/activity_horizontal_margin"
     android:layout_marginEnd="@dimen/activity_horizontal_margin"
     android:scrollbars="none"
@@ -48,7 +48,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginStart="16dp"
-                        android:src="@drawable/ic_launcher_foreground"
+                        android:src="@drawable/wind"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_wind_speed_home"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_wind_speed_header_home" />
@@ -80,42 +80,16 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/location_black_24"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView"
-                style="@style/textViewHome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:drawableEnd="@drawable/change_icon"
-                android:drawablePadding="4dp"
-                android:gravity="center|center_horizontal|center_vertical"
-                android:singleLine="true"
-                android:text="Loction"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="@+id/imageView" />
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 app:cardCornerRadius="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -125,22 +99,10 @@
                     <TextView
                         android:id="@+id/tv_date_home"
                         style="@style/textViewOnCardHome"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginEnd="24dp"
-                        app:layout_constraintEnd_toStartOf="@+id/tv_time_home"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_time_home"
-                        style="@style/textViewOnCardHome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
-                        android:layout_marginEnd="24dp"
+                        android:layout_marginEnd="16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -148,10 +110,9 @@
                         android:id="@+id/iv_icon_home"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:layout_marginTop="24dp"
-                        android:src="@drawable/ic_launcher_foreground"
-                        app:layout_constraintStart_toStartOf="@+id/tv_date_home"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_date_home" />
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="@+id/imageView"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
                     <TextView
                         android:id="@+id/tv_temp_home"
@@ -213,6 +174,40 @@
                         app:layout_constraintBottom_toBottomOf="@+id/tv_lastUpdate_home"
                         app:layout_constraintStart_toEndOf="@+id/tv_lastUpdate_home"
                         app:layout_constraintTop_toTopOf="@+id/tv_lastUpdate_home" />
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/location_black_24"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_location_home"
+                        style="@style/textViewHome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:drawableEnd="@drawable/change_icon"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:singleLine="true"
+                        android:text="Loction"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        app:autoSizeMaxTextSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_date_home"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/imageView"
+                        app:layout_constraintTop_toTopOf="@+id/imageView" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
@@ -224,6 +219,7 @@
                 android:layout_marginTop="24dp"
                 android:text="@string/hourly"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
@@ -231,6 +227,7 @@
                 android:id="@+id/rv_hourly_weather_home"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -244,6 +241,7 @@
                 android:layout_marginTop="24dp"
                 android:text="@string/daily"
                 android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rv_hourly_weather_home" />
 
@@ -281,7 +279,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginStart="16dp"
-                        android:src="@drawable/ic_launcher_foreground"
+                        android:src="@drawable/drop"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_humidity_home"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_header_humidity_home"
@@ -337,7 +335,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginStart="16dp"
-                        android:src="@drawable/ic_launcher_foreground"
+                        android:src="@drawable/barometer"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_pressure_home"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_header_pressure_home"
@@ -377,7 +375,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="1245dp"
+                android:layout_marginBottom="12dp"
                 android:elevation="0dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
@@ -396,7 +394,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginStart="16dp"
-                        android:src="@drawable/ic_launcher_foreground"
+                        android:src="@drawable/cloud"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_clouds_home"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_header_clouds_home"
@@ -434,6 +432,7 @@
             android:id="@+id/shimmer_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -451,26 +450,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/imageViewShimmer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/location_black_24"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView1"
                     android:layout_width="0dp"
                     android:layout_height="200dp"
                     android:layout_marginStart="1dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="16dp"
                     app:cardCornerRadius="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageViewShimmer">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"

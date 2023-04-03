@@ -1,4 +1,4 @@
-package com.example.weathermood.Setting
+package com.example.weathermood.setting
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

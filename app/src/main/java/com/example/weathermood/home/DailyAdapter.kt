@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weathermood.databinding.ItemRvDaliyBinding
@@ -13,7 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DailyAdapter (
-    private var daily: List<Daily> = listOf<Daily>(),
+    private var daily: List<Daily> = listOf(),
 ) : RecyclerView.Adapter<DailyAdapter.ViewHolder>() {
     private val TAG: String? = "TAGG"
     lateinit var context: Context
@@ -32,18 +33,20 @@ class DailyAdapter (
     }
 
     override fun onBindViewHolder(holder: DailyAdapter.ViewHolder, position: Int) {
-        holder.binding.tvDaliyHeader.text=getDate(daily[position].dt)
+        if (position==0)
+            holder.binding.tvDaliyHeader.text="Today"
+        else
+            holder.binding.tvDaliyHeader.text=getDate(daily[position].dt)
         holder.binding.tvDaily.text=daily[position].weather[0].description
         holder.binding.tvTempDaliy.text=daily[position].temp.day.toString()+ '\u00B0'.toString() + "K"
-        Glide.with(context).load(context.getDrawable(Helper.image.get(daily[position].weather[0].icon)!!))
-            .error(context.getDrawable(com.example.weathermood.R.drawable.twotone_error_24)).into(holder.binding.ivDaily)
+        Glide.with(context).load(AppCompatResources.getDrawable(context,Helper.image.get(daily[position].weather[0].icon)!!))
+            .error(AppCompatResources.getDrawable(context,com.example.weathermood.R.drawable.twotone_error_24)).into(holder.binding.ivDaily)
 
     }
 
     override fun getItemCount(): Int =daily.size
     private fun getDate(s: Long): String? {
         try {
-            Log.i(TAG, "getDate: " + s)
             val sdf = SimpleDateFormat("EEEE")
             val netDate = Date(s * 1000)
             return sdf.format(netDate)
