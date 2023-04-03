@@ -1,7 +1,9 @@
 package com.example.weathermood
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -12,6 +14,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.weathermood.databinding.ActivityMainBinding
+import com.example.weathermood.home.HomeFragmentDirections
+import com.example.weathermood.shareperf.MySharedPreference
 import com.google.android.material.navigation.NavigationView
 import java.util.*
 import java.util.function.IntPredicate
@@ -34,10 +38,8 @@ class MainActivity : AppCompatActivity() {
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content)
 
-        val dialogsIds = intArrayOf(
-            R.id.action_nav_home_to_maps_fragment,
-            R.id.action_nav_favourite_to_maps_fragment
-            )
+
+
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -45,17 +47,18 @@ class MainActivity : AppCompatActivity() {
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
+
         navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { navController: NavController?, navDestination: NavDestination, bundle: Bundle? ->
-            val isMatch: Boolean = Arrays.stream(dialogsIds).anyMatch(
-                 { id: Int -> navDestination.id == id })
-                setVisibilityToolbar(isMatch)
+            val isMatch: Boolean = navDestination.label=="fragment_maps"
+            setVisibilityToolbar(isMatch)
         }
     }
 
     private fun setVisibilityToolbar(show:Boolean) {
-       binding.appBar.toolbar.visibility= View.GONE
+        Log.i("TAGG", "setVisibilityToolbar: $show")
+        binding.appBar.toolbar.visibility= if (show) View.GONE else View.VISIBLE
     }
 
     override fun onSupportNavigateUp(): Boolean {

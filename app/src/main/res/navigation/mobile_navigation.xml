@@ -12,7 +12,14 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_nav_home_to_maps_fragment"
-            app:destination="@id/maps_fragment" />
+            app:destination="@id/maps_fragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="lat"
+            app:argType="string" />
+        <argument
+            android:name="log"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -22,7 +29,14 @@
         tools:layout="@layout/fragment_gallery" >
         <action
             android:id="@+id/action_nav_favourite_to_maps_fragment"
-            app:destination="@id/maps_fragment" />
+            app:destination="@id/maps_fragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="lat"
+            app:argType="string" />
+        <argument
+            android:name="log"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -39,5 +53,18 @@
         android:id="@+id/maps_fragment"
         android:name="com.example.weathermood.map.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps" >
+        <argument
+            android:name="isHome"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action
+            android:id="@+id/action_maps_fragment_to_nav_home"
+            app:destination="@id/nav_home"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_maps_fragment_to_nav_favourite"
+            app:destination="@id/nav_favourite"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

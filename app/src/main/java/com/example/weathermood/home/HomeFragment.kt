@@ -22,21 +22,26 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.ActionOnlyNavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.Serves
+import com.example.weathermood.MyHomeDialog
 import com.example.weathermood.databinding.FragmentHomeBinding
+import com.example.weathermood.home.HomeFragmentDirections.ActionNavHomeToMapsFragment
+import com.example.weathermood.home.HomeFragmentDirections.actionNavHomeToMapsFragment
 import com.example.weathermood.home.mvvvm.HomeViewFactory
 import com.example.weathermood.home.mvvvm.HomeViewModel
 import com.example.weathermood.home.repository.Repository
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.model.OneCallHome
+import com.example.weathermood.shareperf.MySharedPreference
 import com.example.weathermood.utilities.Helper
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
@@ -68,8 +73,11 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        findNavController().navigate(com.example.weathermood.R.id.action_nav_home_to_maps_fragment)
+
+        MySharedPreference.getInstance(requireActivity())
+
         val myFactory = HomeViewFactory(Repository(LocalDataClass(requireContext()), Serves()))
+        
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -123,6 +131,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+
         return binding.root
     }
 
@@ -139,8 +148,34 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getWeather()
-        getLocationOnline()
+//        if (MySharedPreference.isNotFirstTime()){
+        if (true){
+            showDialog()
+            MySharedPreference.setFirstTime()
+        }
+        setFragmentResultListener(Helper.REQUEST_KEY_MAPS) { s: String, b: Bundle ->
+
+            Toast.makeText(requireContext(), "MAPS", Toast.LENGTH_LONG).show()
+            val x=actionNavHomeToMapsFragment().setIsHome(true)
+            Log.i("TAGG", "onResume: ${x.actionId}")
+            findNavController().navigate(x)
+
+
+
+        }
+        setFragmentResultListener(Helper.REQUEST_KEY_GPS) { s: String, b: Bundle ->
+            getLocationOnline()
+            Toast.makeText(requireContext(), "Gps", Toast.LENGTH_LONG).show()
+        }
+//        viewModel.getWeather()
+//        getLocationOnline()
+    }
+
+    private fun showDialog() {
+        val dialogFragment = MyHomeDialog()
+        dialogFragment.show(getParentFragmentManager(), "MyDialogFragment")
+        dialogFragment.isCancelable = false
+//        dialogFragment.setTargetFragment(this, REQUEST_CODE_MY_DIALOG)
     }
 
     private fun setData(data: OneCall) {
@@ -307,7 +342,7 @@ class HomeFragment : Fragment() {
             return e.toString()
         }
     }
-    fun isOnline(): Boolean {
+    private fun isOnline(): Boolean {
         val connectivityManager =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivityManager != null) {
@@ -329,4 +364,13 @@ class HomeFragment : Fragment() {
         return false
     }
 
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if (requestCode == REQUEST_CODE_MY_DIALOG && resultCode == Activity.RESULT_OK) {
+//            if (data != null) {//i don't need any data from the intent
+//                Log.i(TAG, "onActivityResult: testing")
+//                getLocation()
+//            }
+//        }
+//    }
 }
+

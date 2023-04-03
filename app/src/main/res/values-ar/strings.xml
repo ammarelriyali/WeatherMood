@@ -9,4 +9,7 @@
     <string name="pick">اختر</string>
     <string name="action_settings">الاعدادات</string>
     <string name="hourly">الساعات القادمة</string>
+    <string name="mapHome">الخرائط</string>
+    <string name="LocationHome">الموقع</string>
+    <string name="close">غلق</string>
 </resources>
