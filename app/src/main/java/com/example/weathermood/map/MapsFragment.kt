@@ -94,7 +94,7 @@ class MapsFragment : Fragment() {
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             val address: MutableList<Address>? =
                 geocoder.getFromLocation(position.latitude, position.longitude, 1)
-              city = address?.get(0)?.getAddressLine(0)!!.split(",")[1]
+              city = address?.get(0)?.getAddressLine(0)!!
 
         }
         return city

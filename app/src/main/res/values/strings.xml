@@ -20,4 +20,5 @@
     <string name="close">close</string>
     <string name="mapHome">Maps</string>
     <string name="LocationHome">GPS</string>
+    <string name="empty_list">No Location Added</string>
 </resources>

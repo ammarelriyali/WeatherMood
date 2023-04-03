@@ -25,11 +25,15 @@ class FavouriteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val favouriteViewFactory= FavouriteViewFactory(LocalDataClass(requireContext()))
-        val galleryViewModel =
+        val viewModel =
             ViewModelProvider(this,favouriteViewFactory).get(FavouriteViewModel::class.java)
         _binding = FragmentFavouriteBinding.inflate(inflater, container, false)
+        binding.avEmptyLocation.playAnimation()
 
 
+        binding.fabAddLocation.setOnClickListener(){
+            
+        }
         return binding.root
     }
 

@@ -12,4 +12,5 @@
     <string name="mapHome">الخرائط</string>
     <string name="LocationHome">الموقع</string>
     <string name="close">غلق</string>
+    <string name="empty_list">"No Location Added "</string>
 </resources>
