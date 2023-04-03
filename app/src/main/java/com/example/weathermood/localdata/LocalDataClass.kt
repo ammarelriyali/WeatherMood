@@ -3,6 +3,7 @@ package com.example.mvvm.DB
 import android.content.Context
 import com.example.weathermood.localdata.DAO
 import com.example.weathermood.localdata.WeatherDB
+import com.example.weathermood.model.FavouriteLocation
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.model.OneCallHome
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,10 @@ class LocalDataClass(context:Context) : LocalData {
 
     override  fun getCall():Flow<List<OneCallHome>> {
        return dao.getCall()
+    }
+
+    override suspend fun insertFav(favouriteLocation: FavouriteLocation) {
+      dao.insertFav(favouriteLocation)
     }
 
 

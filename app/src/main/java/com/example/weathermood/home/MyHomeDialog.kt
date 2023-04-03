@@ -1,4 +1,4 @@
-package com.example.weathermood
+package com.example.weathermood.home
 
 import android.app.Activity
 import android.content.Intent
@@ -14,16 +14,12 @@ import com.example.weathermood.utilities.Helper
 
 class MyHomeDialog : DialogFragment() {
     lateinit var _binding: FragmentDailogHomeBinding
-    var okClicked = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-
         _binding = FragmentDailogHomeBinding.inflate(inflater)
-
         return _binding.root
     }
 

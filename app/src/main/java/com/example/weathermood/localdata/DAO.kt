@@ -12,5 +12,8 @@ interface DAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun  insert(oneCall: OneCallHome)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFav(favouriteLocation: FavouriteLocation)
+
 
 }

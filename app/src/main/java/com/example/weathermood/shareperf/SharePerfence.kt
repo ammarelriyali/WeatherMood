@@ -12,7 +12,7 @@ object MySharedPreference{
         Log.i("TAG", "getInstance: ")
         sharedPreferences = activity.getSharedPreferences(NAME, Context.MODE_PRIVATE)
     }
-    fun isNotFirstTime():Boolean{
+    fun isFirstTime():Boolean{
         return sharedPreferences.getBoolean("is First Time",true)
     }
     fun setFirstTime(){
@@ -21,7 +21,15 @@ object MySharedPreference{
         editor.apply()
     }
 
-
+    fun getWeatherFromMap(): Boolean {
+        return sharedPreferences.getBoolean("get weather form map",true)
+    }
+    fun setWeatherFromMap(boolean: Boolean)  {
+        Log.i("TAG", "setWeatherFromMap: $boolean")
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("get weather form map",boolean)
+        editor.apply()
+    }
 
 
 }

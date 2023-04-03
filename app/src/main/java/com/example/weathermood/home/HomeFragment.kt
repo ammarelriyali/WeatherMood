@@ -25,16 +25,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.ActionOnlyNavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.Serves
-import com.example.weathermood.MyHomeDialog
 import com.example.weathermood.databinding.FragmentHomeBinding
-import com.example.weathermood.home.HomeFragmentDirections.ActionNavHomeToMapsFragment
 import com.example.weathermood.home.HomeFragmentDirections.actionNavHomeToMapsFragment
 import com.example.weathermood.home.mvvvm.HomeViewFactory
 import com.example.weathermood.home.mvvvm.HomeViewModel
@@ -48,12 +46,16 @@ import com.google.android.material.snackbar.Snackbar
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 
 import java.util.*
 
 class HomeFragment : Fragment() {
 
+    private lateinit var lon: String
+    private lateinit var lat: String
+    val args: HomeFragmentArgs by navArgs()
     private var city: String? = null
     private val My_LOCATION_PERMISSION_ID: Int = 33
     private val TAG: String = "TAGG"
@@ -77,14 +79,13 @@ class HomeFragment : Fragment() {
         MySharedPreference.getInstance(requireActivity())
 
         val myFactory = HomeViewFactory(Repository(LocalDataClass(requireContext()), Serves()))
-        
+
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-        if (!checkPermissions())
-            askForPermissions()
+
 
         binding.rvHourlyWeatherHome.apply {
             adapter = hourlyAdapter
@@ -94,24 +95,31 @@ class HomeFragment : Fragment() {
             adapter = dailyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        binding.ivRefreshHome.setOnClickListener(){
-            binding.progressBar.visibility=View.VISIBLE
-            binding.ivRefreshHome.visibility=View.GONE
-            getLocationOnline()
+        binding.ivRefreshHome.setOnClickListener() {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.ivRefreshHome.visibility = View.GONE
+            handleIsOnlineState()
         }
-        lifecycleScope.launchWhenResumed {
+
+        binding.tvLocationHome.setOnClickListener(){
+            showDialog()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
 
             viewModel.response.collect() {
                 when (it) {
                     is ResponseState.SuccessApi -> {
                         setData(it.data)
                         viewModel.insertCall(OneCallHome(oneCall = it.data).apply {
-                            this.city= this@HomeFragment.city ?: "Empty"
+                            this.city = this@HomeFragment.city ?: "Empty"
                         })
                         disableShimmer()
                     }
                     is ResponseState.Success -> {
-                        this@HomeFragment.city=it.data.city
+                        this@HomeFragment.city = it.data.city
+                        this@HomeFragment.lat = it.data.oneCall.lat.toString()
+                        this@HomeFragment.lon = it.data.oneCall.lon.toString()
                         setData(it.data.oneCall)
                         disableShimmer()
                     }
@@ -121,7 +129,11 @@ class HomeFragment : Fragment() {
                     }
                     is ResponseState.FailureResponse -> {
                         Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
-                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"the server had issue pls try later",Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            requireActivity().findViewById(android.R.id.content),
+                            "the server had issue pls try later",
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         disableShimmer()
                     }
                     else -> {
@@ -129,18 +141,26 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
+
         }
 
+        setFragmentRes()
+
+        enableShimmer()
 
         return binding.root
     }
 
-    private fun getLocationOnline() {
-        if (isOnline())
-            getLocation()
-        else{
-            Snackbar.make(requireActivity().findViewById(android.R.id.content),"please open internet",Snackbar.LENGTH_LONG).show()
-            Log.i(TAG, "getLocationOnline: ")
+    private fun handleIsOnlineState() {
+        if (isOnline()) {
+            viewModel.getCurrentWeather(lon, lat)
+            getCityName()
+        } else {
+            Snackbar.make(
+                requireActivity().findViewById(android.R.id.content),
+                "please open internet",
+                Snackbar.LENGTH_LONG
+            ).show()
             disableShimmer()
         }
 
@@ -148,39 +168,50 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        if (MySharedPreference.isNotFirstTime()){
-        if (true){
+        Log.i(TAG, "onResume: ")
+        if (MySharedPreference.isFirstTime()) {
+            Log.i(TAG, "onResume: first")
             showDialog()
             MySharedPreference.setFirstTime()
-        }
+        } else if (args.isOpen) {
+            Log.i(TAG, "onResume: isopne")
+            if (args.lat != "0.0") {
+                lat = args.lat
+                lon = args.log
+                handleIsOnlineState()
+            }
+        } else if (MySharedPreference.getWeatherFromMap()) {
+            Log.i(TAG, "onResume: getwheret")
+            navigationFromHomeToMap()
+        } else
+            getLocation()
+        viewModel.getWeather()
+    }
+
+    private fun setFragmentRes() {
         setFragmentResultListener(Helper.REQUEST_KEY_MAPS) { s: String, b: Bundle ->
-
-            Toast.makeText(requireContext(), "MAPS", Toast.LENGTH_LONG).show()
-            val x=actionNavHomeToMapsFragment().setIsHome(true)
-            Log.i("TAGG", "onResume: ${x.actionId}")
-            findNavController().navigate(x)
-
-
-
+            MySharedPreference.setWeatherFromMap(true)
+            navigationFromHomeToMap()
         }
         setFragmentResultListener(Helper.REQUEST_KEY_GPS) { s: String, b: Bundle ->
-            getLocationOnline()
-            Toast.makeText(requireContext(), "Gps", Toast.LENGTH_LONG).show()
+            MySharedPreference.setWeatherFromMap(false)
+            getLocation()
+
         }
-//        viewModel.getWeather()
-//        getLocationOnline()
+    }
+
+    private fun navigationFromHomeToMap() {
+        val x = actionNavHomeToMapsFragment().setIsHome(true)
+        findNavController().navigate(x)
     }
 
     private fun showDialog() {
         val dialogFragment = MyHomeDialog()
-        dialogFragment.show(getParentFragmentManager(), "MyDialogFragment")
         dialogFragment.isCancelable = false
-//        dialogFragment.setTargetFragment(this, REQUEST_CODE_MY_DIALOG)
+        dialogFragment.show(getParentFragmentManager(), "MyDialogFragment")
     }
 
     private fun setData(data: OneCall) {
-
-        binding.tvLocationHome.text = city
 
         binding.tvDateHome.text = getDate(data.current!!.dt)
         binding.tvTempHome.text =
@@ -192,11 +223,17 @@ class HomeFragment : Fragment() {
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)
         Glide.with(requireContext()).load(
-            AppCompatResources.getDrawable(requireContext(),
+            AppCompatResources.getDrawable(
+                requireContext(),
                 Helper.image.get(data.current!!.weather[0].icon)!!
             )
         )
-            .error(AppCompatResources.getDrawable(requireContext(),com.example.weathermood.R.drawable.twotone_error_24))
+            .error(
+                AppCompatResources.getDrawable(
+                    requireContext(),
+                    com.example.weathermood.R.drawable.twotone_error_24
+                )
+            )
             .into(binding.ivIconHome)
         binding.tvHumidityHome.text = data.current?.humidity.toString() + " %"
         binding.tvWindSpeedHome.text =
@@ -209,16 +246,14 @@ class HomeFragment : Fragment() {
         binding.clHome.visibility = View.GONE
         binding.shimmerHome.visibility = View.VISIBLE
         binding.shimmerHome.startShimmer()
-
-
     }
 
     private fun disableShimmer() {
         binding.shimmerHome.stopShimmer()
         binding.shimmerHome.visibility = View.GONE
         binding.clHome.visibility = View.VISIBLE
-        binding.ivRefreshHome.visibility= View.VISIBLE
-        binding.progressBar.visibility= View.GONE
+        binding.ivRefreshHome.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
 
     }
 
@@ -260,13 +295,15 @@ class HomeFragment : Fragment() {
             else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        val address: MutableList<Address>? =
-                            location?.let { geocoder.getFromLocation(it.latitude, it.longitude, 1) }
-                        city = address?.get(0)?.getAddressLine(0)!!.split(",")[1]
-                        setLocation(location.latitude.toString(), location.longitude.toString())
-                    }catch (e:java.lang.Exception){
-                        Log.i(TAG, "getLocationData: ${e.message}")
+                        lat = location.latitude.toString()
+                        lon = location.longitude.toString()
+                        getCityName()
+                        handleIsOnlineState()
+                    } catch (e: java.lang.Exception) {
+                        Log.i(TAG, "getLocationData: gec ${e.message}")
+                        withContext(Dispatchers.Main) {
+                            disableShimmer()
+                        }
                     }
                 }
 
@@ -275,12 +312,17 @@ class HomeFragment : Fragment() {
 
     }
 
-
-    private fun setLocation(lat: String, lon: String) {
-        viewModel.getCurrentWeather(lon, lat)
-        Log.i(TAG, "onLocationResult: $lat")
-        Log.i(TAG, "onLocationResult: $lon")
-
+    private fun getCityName() {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            Log.i(TAG, "getCityName: $lat $lon")
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val address: MutableList<Address>? =
+                geocoder.getFromLocation(lat.toDouble(), lon.toDouble(), 1)
+            city = address?.get(0)?.getAddressLine(0)!!.split(",")[1]
+            withContext(Dispatchers.Main){
+                binding.tvLocationHome.text=city
+            }
+        }
     }
 
     private fun askForPermissions() {
@@ -317,9 +359,11 @@ class HomeFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.i(TAG, "onRequestPermissionsResult: -------")
         if (requestCode == My_LOCATION_PERMISSION_ID)
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocation()
+                Log.i(TAG, "onRequestPermissionsResult: ")
+
             }
     }
 
@@ -342,6 +386,7 @@ class HomeFragment : Fragment() {
             return e.toString()
         }
     }
+
     private fun isOnline(): Boolean {
         val connectivityManager =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -364,13 +409,6 @@ class HomeFragment : Fragment() {
         return false
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        if (requestCode == REQUEST_CODE_MY_DIALOG && resultCode == Activity.RESULT_OK) {
-//            if (data != null) {//i don't need any data from the intent
-//                Log.i(TAG, "onActivityResult: testing")
-//                getLocation()
-//            }
-//        }
-//    }
+
 }
 
