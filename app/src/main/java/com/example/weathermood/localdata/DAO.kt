@@ -16,6 +16,8 @@ interface DAO {
     suspend fun insertFav(favouriteLocation: FavouriteLocation)
     @Query("Select * from FavouriteLocation")
     fun getFavItems(): Flow<List<FavouriteLocation>>
+    @Delete
+   suspend fun deleteFav(data: FavouriteLocation)
 
 
 }

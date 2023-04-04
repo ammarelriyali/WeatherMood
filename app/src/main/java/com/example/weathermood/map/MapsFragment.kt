@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,6 +25,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -31,7 +36,8 @@ import java.util.*
 class MapsFragment : Fragment() {
     val args: MapsFragmentArgs by navArgs()
     lateinit var button: Button
-    private var position: LatLng = LatLng(0.0,0.0)
+    private var position: LatLng = LatLng(0.0, 0.0)
+    lateinit var progressBar: ProgressBar
 
     private val callback = OnMapReadyCallback { googleMap ->
 
@@ -45,9 +51,7 @@ class MapsFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_maps, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,8 +59,11 @@ class MapsFragment : Fragment() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
         button = view.findViewById(R.id.b_pick)
+        progressBar = view.findViewById(R.id.pb_map)
         button.setOnClickListener() {
-           navigate()
+            progressBar.visibility = View.VISIBLE
+            button.visibility = View.GONE
+            navigate()
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             navigate()
@@ -65,29 +72,52 @@ class MapsFragment : Fragment() {
 
 
     private fun navigate() {
-        Log.i("TAGG", "navigate: ${position.latitude} ${position.longitude}")
         if (args.isHome) {
             val x = MapsFragmentDirections.actionMapsFragmentToNavHome(
-            ).setLat(position!!.latitude.toString()).setLog(position!!.longitude.toString()).setIsOpen(true)
+            ).setLat(position!!.latitude.toString()).setLog(position!!.longitude.toString())
+                .setIsOpen(true)
             findNavController().navigate(x)
         } else {
-            if (position.latitude != 0.0)
-                insertFavItem()
-            val x = MapsFragmentDirections.actionMapsFragmentToNavFavourite(
-            ).setLat(position!!.latitude.toString()).setLog(position!!.longitude.toString())
-            findNavController().navigate(x)
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                if (position.latitude != 0.0) {
+                    getCity.catch { withContext(Dispatchers.Main) { tryAgain() } }.collect() {
+                        insertFavItem(it)
+                    }
+                }
+
+            }
         }
     }
 
-    private fun insertFavItem() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val local:LocalData=LocalDataClass(requireContext())
-             val geocoder = Geocoder(requireContext(), Locale.getDefault())
-            val address: MutableList<Address>? =
-                geocoder.getFromLocation(position.latitude, position.longitude, 1)
-            val city = address?.get(0)?.getAddressLine(0)!!
-            local.insertFav(FavouriteLocation(position!!.longitude.toString(),position!!.latitude.toString(),city))
+    private fun tryAgain() {
+        progressBar.visibility = View.GONE
+        button.visibility = View.VISIBLE
+        button.text = getString(R.string.tryAgain)
+    }
+
+    private suspend fun insertFavItem(city: String) {
+        val local: LocalData = LocalDataClass(requireContext())
+        local.insertFav(
+            FavouriteLocation(
+                position!!.longitude.toString(), position!!.latitude.toString(), city
+            )
+        )
+        val x = MapsFragmentDirections.actionMapsFragmentToNavFavourite(
+        ).setLat(position!!.latitude.toString()).setLog(position!!.longitude.toString())
+        withContext(Dispatchers.Main) {
+            findNavController().navigate(x)
         }
+
+    }
+
+    val getCity = flow<String> {
+
+
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        val address: MutableList<Address>? =
+            geocoder.getFromLocation(position.latitude, position.longitude, 1)
+        if (address.isNullOrEmpty() || address.get(0).getAddressLine(0) == null) emit("empty")
+        else emit(address?.get(0)?.getAddressLine(0)!!)
 
     }
 }

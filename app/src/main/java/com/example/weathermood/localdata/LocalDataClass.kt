@@ -29,6 +29,10 @@ class LocalDataClass(context:Context) : LocalData {
         return dao.getFavItems()
     }
 
+    override suspend fun deleteFavItem(data: FavouriteLocation) {
+       dao.deleteFav(data)
+    }
+
 
 }
 

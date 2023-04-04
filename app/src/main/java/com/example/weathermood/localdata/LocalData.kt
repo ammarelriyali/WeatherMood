@@ -10,5 +10,6 @@ interface LocalData{
     fun getCall(): Flow<List<OneCallHome>>
     suspend fun insertFav(favouriteLocation: FavouriteLocation)
     fun getFavItems():Flow<List<FavouriteLocation>>
+    suspend fun deleteFavItem(data: FavouriteLocation)
 
 }

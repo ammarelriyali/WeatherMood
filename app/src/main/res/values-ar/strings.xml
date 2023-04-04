@@ -12,5 +12,12 @@
     <string name="mapHome">الخرائط</string>
     <string name="LocationHome">الموقع</string>
     <string name="close">غلق</string>
-    <string name="empty_list">"No Location Added "</string>
+    <string name="empty_list">لم يتم تحديد موقع</string>
+    <string name="tryAgain">رجاء عاود المحاولة</string>
+    <string name="undo">تراجع</string>
+    <string name="weHadIssue">يوجد مشكله رجاء عاود المحاوله</string>
+    <string name="serverHadIssue">السرفير يوجد بيه عطل رجاء عاود المحاورلة</string>
+    <string name="lastUpdate">"اخر تحديث "</string>
+    <string name="address">العنوان</string>
+    <string name="today">اليوم</string>
 </resources>

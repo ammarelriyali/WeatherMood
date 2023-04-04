@@ -36,7 +36,8 @@ import com.example.weathermood.databinding.FragmentHomeBinding
 import com.example.weathermood.home.HomeFragmentDirections.actionNavHomeToMapsFragment
 import com.example.weathermood.home.mvvvm.HomeViewFactory
 import com.example.weathermood.home.mvvvm.HomeViewModel
-import com.example.weathermood.home.repository.Repository
+import com.example.weathermood.home.mvvvm.ResponseStateHome
+import com.example.weathermood.home.mvvvm.repository.RepositoryHome
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.model.OneCallHome
 import com.example.weathermood.shareperf.MySharedPreference
@@ -78,7 +79,7 @@ class HomeFragment : Fragment() {
 
         MySharedPreference.getInstance(requireActivity())
 
-        val myFactory = HomeViewFactory(Repository(LocalDataClass(requireContext()), Serves()))
+        val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), Serves()))
 
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 
@@ -93,7 +94,7 @@ class HomeFragment : Fragment() {
         }
         binding.rvDaliyWeatherHome.apply {
             adapter = dailyAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = object : LinearLayoutManager(requireContext()) { override fun canScrollVertically() = false }
         }
         binding.ivRefreshHome.setOnClickListener() {
             binding.progressBar.visibility = View.VISIBLE
@@ -101,7 +102,7 @@ class HomeFragment : Fragment() {
             handleIsOnlineState()
         }
 
-        binding.tvLocationHome.setOnClickListener(){
+        binding.llLoctionName.setOnClickListener(){
             showDialog()
         }
 
@@ -129,6 +130,7 @@ class HomeFragment : Fragment() {
                     }
                     is ResponseStateHome.FailureHomeResponse -> {
                         Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
+                       Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
                         Snackbar.make(
                             requireActivity().findViewById(android.R.id.content),
                             "the server had issue pls try later",
@@ -217,7 +219,7 @@ class HomeFragment : Fragment() {
             data.current!!.temp.toString() + '\u00B0'.toString() + "K"
         binding.tvStatusHome.text = data.current!!.weather[0].description
         binding.tvLastUpdateHome.text =
-            "last update " + getTime(data.current!!.dt)
+            getString(com.example.weathermood.R.string.lastUpdate) +" "+ getTime(data.current!!.dt)
 
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)
@@ -318,7 +320,15 @@ class HomeFragment : Fragment() {
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             val address: MutableList<Address>? =
                 geocoder.getFromLocation(lat.toDouble(), lon.toDouble(), 1)
-            city = address?.get(0)?.getAddressLine(0)!!.split(",")[1]
+            if (address.isNullOrEmpty() || address.get(0).getAddressLine(0) == null)
+                city="empty"
+            else{
+                val arr = address?.get(0)?.getAddressLine(0)!!.split(",")
+                if (arr.size>1)
+                    city=arr[1]
+                else
+                    city=arr[0]
+            }
             withContext(Dispatchers.Main){
                 binding.tvLocationHome.text=city
             }
