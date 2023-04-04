@@ -20,4 +20,12 @@
     <string name="close">close</string>
     <string name="mapHome">Maps</string>
     <string name="LocationHome">GPS</string>
+    <string name="empty_list">No Location Added</string>
+    <string name="tryAgain">try Again please</string>
+    <string name="undo">Undo</string>
+    <string name="weHadIssue">We had issue please try later</string>
+    <string name="serverHadIssue">The sever had issue please try later</string>
+    <string name="lastUpdate">last update</string>
+    <string name="address">Adress</string>
+    <string name="today">Today</string>
 </resources>

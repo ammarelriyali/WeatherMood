@@ -36,7 +36,8 @@ import com.example.weathermood.databinding.FragmentHomeBinding
 import com.example.weathermood.home.HomeFragmentDirections.actionNavHomeToMapsFragment
 import com.example.weathermood.home.mvvvm.HomeViewFactory
 import com.example.weathermood.home.mvvvm.HomeViewModel
-import com.example.weathermood.home.repository.Repository
+import com.example.weathermood.home.mvvvm.ResponseStateHome
+import com.example.weathermood.home.mvvvm.repository.RepositoryHome
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.model.OneCallHome
 import com.example.weathermood.shareperf.MySharedPreference
@@ -78,7 +79,7 @@ class HomeFragment : Fragment() {
 
         MySharedPreference.getInstance(requireActivity())
 
-        val myFactory = HomeViewFactory(Repository(LocalDataClass(requireContext()), Serves()))
+        val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), Serves()))
 
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 
@@ -93,7 +94,7 @@ class HomeFragment : Fragment() {
         }
         binding.rvDaliyWeatherHome.apply {
             adapter = dailyAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = object : LinearLayoutManager(requireContext()) { override fun canScrollVertically() = false }
         }
         binding.ivRefreshHome.setOnClickListener() {
             binding.progressBar.visibility = View.VISIBLE
@@ -101,7 +102,7 @@ class HomeFragment : Fragment() {
             handleIsOnlineState()
         }
 
-        binding.tvLocationHome.setOnClickListener(){
+        binding.llLoctionName.setOnClickListener(){
             showDialog()
         }
 
@@ -109,26 +110,27 @@ class HomeFragment : Fragment() {
 
             viewModel.response.collect() {
                 when (it) {
-                    is ResponseState.SuccessApi -> {
+                    is ResponseStateHome.SuccessApi -> {
                         setData(it.data)
                         viewModel.insertCall(OneCallHome(oneCall = it.data).apply {
                             this.city = this@HomeFragment.city ?: "Empty"
                         })
                         disableShimmer()
                     }
-                    is ResponseState.Success -> {
+                    is ResponseStateHome.Success -> {
                         this@HomeFragment.city = it.data.city
                         this@HomeFragment.lat = it.data.oneCall.lat.toString()
                         this@HomeFragment.lon = it.data.oneCall.lon.toString()
                         setData(it.data.oneCall)
                         disableShimmer()
                     }
-                    is ResponseState.Failure -> {
+                    is ResponseStateHome.Failure -> {
                         Log.i(TAG, "onCreate: ${it.msg}")
                         disableShimmer()
                     }
-                    is ResponseState.FailureResponse -> {
+                    is ResponseStateHome.FailureHomeResponse -> {
                         Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
+                       Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
                         Snackbar.make(
                             requireActivity().findViewById(android.R.id.content),
                             "the server had issue pls try later",
@@ -168,9 +170,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.i(TAG, "onResume: ")
         if (MySharedPreference.isFirstTime()) {
-            Log.i(TAG, "onResume: first")
             showDialog()
             MySharedPreference.setFirstTime()
         } else if (args.isOpen) {
@@ -206,6 +206,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showDialog() {
+        enableShimmer()
         val dialogFragment = MyHomeDialog()
         dialogFragment.isCancelable = false
         dialogFragment.show(getParentFragmentManager(), "MyDialogFragment")
@@ -218,7 +219,7 @@ class HomeFragment : Fragment() {
             data.current!!.temp.toString() + '\u00B0'.toString() + "K"
         binding.tvStatusHome.text = data.current!!.weather[0].description
         binding.tvLastUpdateHome.text =
-            "last update " + getTime(data.current!!.dt)
+            getString(com.example.weathermood.R.string.lastUpdate) +" "+ getTime(data.current!!.dt)
 
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)
@@ -271,6 +272,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getLocation() {
+        enableShimmer()
         if (checkPermissions()) {
             if (enableLocation()) {
                 getLocationData()
@@ -318,7 +320,15 @@ class HomeFragment : Fragment() {
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
             val address: MutableList<Address>? =
                 geocoder.getFromLocation(lat.toDouble(), lon.toDouble(), 1)
-            city = address?.get(0)?.getAddressLine(0)!!.split(",")[1]
+            if (address.isNullOrEmpty() || address.get(0).getAddressLine(0) == null)
+                city="empty"
+            else{
+                val arr = address?.get(0)?.getAddressLine(0)!!.split(",")
+                if (arr.size>1)
+                    city=arr[1]
+                else
+                    city=arr[0]
+            }
             withContext(Dispatchers.Main){
                 binding.tvLocationHome.text=city
             }

@@ -1,6 +1,7 @@
 package com.example.mvvm.DB
 
 import android.content.Context
+import android.util.Log
 import com.example.weathermood.localdata.DAO
 import com.example.weathermood.localdata.WeatherDB
 import com.example.weathermood.model.FavouriteLocation
@@ -20,7 +21,16 @@ class LocalDataClass(context:Context) : LocalData {
     }
 
     override suspend fun insertFav(favouriteLocation: FavouriteLocation) {
+        Log.i("TAG", "insertFav: "+favouriteLocation.city)
       dao.insertFav(favouriteLocation)
+    }
+
+    override fun getFavItems(): Flow<List<FavouriteLocation>> {
+        return dao.getFavItems()
+    }
+
+    override suspend fun deleteFavItem(data: FavouriteLocation) {
+       dao.deleteFav(data)
     }
 
 

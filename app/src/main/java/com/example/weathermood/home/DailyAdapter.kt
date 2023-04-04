@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.weathermood.R
 import com.example.weathermood.databinding.ItemRvDaliyBinding
 import com.example.weathermood.model.Daily
 import com.example.weathermood.utilities.Helper
@@ -34,7 +35,7 @@ class DailyAdapter (
 
     override fun onBindViewHolder(holder: DailyAdapter.ViewHolder, position: Int) {
         if (position==0)
-            holder.binding.tvDaliyHeader.text="Today"
+            holder.binding.tvDaliyHeader.text=context.getString(R.string.today)
         else
             holder.binding.tvDaliyHeader.text=getDate(daily[position].dt)
         holder.binding.tvDaily.text=daily[position].weather[0].description
