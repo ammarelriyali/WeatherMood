@@ -109,25 +109,25 @@ class HomeFragment : Fragment() {
 
             viewModel.response.collect() {
                 when (it) {
-                    is ResponseState.SuccessApi -> {
+                    is ResponseStateHome.SuccessApi -> {
                         setData(it.data)
                         viewModel.insertCall(OneCallHome(oneCall = it.data).apply {
                             this.city = this@HomeFragment.city ?: "Empty"
                         })
                         disableShimmer()
                     }
-                    is ResponseState.Success -> {
+                    is ResponseStateHome.Success -> {
                         this@HomeFragment.city = it.data.city
                         this@HomeFragment.lat = it.data.oneCall.lat.toString()
                         this@HomeFragment.lon = it.data.oneCall.lon.toString()
                         setData(it.data.oneCall)
                         disableShimmer()
                     }
-                    is ResponseState.Failure -> {
+                    is ResponseStateHome.Failure -> {
                         Log.i(TAG, "onCreate: ${it.msg}")
                         disableShimmer()
                     }
-                    is ResponseState.FailureResponse -> {
+                    is ResponseStateHome.FailureHomeResponse -> {
                         Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
                         Snackbar.make(
                             requireActivity().findViewById(android.R.id.content),
@@ -168,9 +168,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.i(TAG, "onResume: ")
         if (MySharedPreference.isFirstTime()) {
-            Log.i(TAG, "onResume: first")
             showDialog()
             MySharedPreference.setFirstTime()
         } else if (args.isOpen) {
@@ -206,6 +204,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showDialog() {
+        enableShimmer()
         val dialogFragment = MyHomeDialog()
         dialogFragment.isCancelable = false
         dialogFragment.show(getParentFragmentManager(), "MyDialogFragment")
@@ -271,6 +270,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getLocation() {
+        enableShimmer()
         if (checkPermissions()) {
             if (enableLocation()) {
                 getLocationData()

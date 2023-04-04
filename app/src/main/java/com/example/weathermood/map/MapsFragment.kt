@@ -82,22 +82,12 @@ class MapsFragment : Fragment() {
     private fun insertFavItem() {
         viewLifecycleOwner.lifecycleScope.launch {
             val local:LocalData=LocalDataClass(requireContext())
-            val city=getCityName()
+             val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val address: MutableList<Address>? =
+                geocoder.getFromLocation(position.latitude, position.longitude, 1)
+            val city = address?.get(0)?.getAddressLine(0)!!
             local.insertFav(FavouriteLocation(position!!.longitude.toString(),position!!.latitude.toString(),city))
         }
 
     }
-
-    private fun getCityName() :String{
-        var city=""
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val geocoder = Geocoder(requireContext(), Locale.getDefault())
-            val address: MutableList<Address>? =
-                geocoder.getFromLocation(position.latitude, position.longitude, 1)
-              city = address?.get(0)?.getAddressLine(0)!!
-
-        }
-        return city
-    }
-
 }

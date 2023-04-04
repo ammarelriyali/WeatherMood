@@ -126,7 +126,7 @@
                         app:layout_constraintTop_toTopOf="@+id/iv_icon_home" />
 
                     <TextView
-                        android:id="@+id/tv_status_home"
+                        android:id="@+id/tv_address_fav"
                         style="@style/textViewOnCardHome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tv_location_home"
+                        android:id="@+id/tv_location_fav"
                         style="@style/textViewHome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         android:singleLine="true"
-                        android:text="Loction"
+                        android:text=""
                         android:textAlignment="textStart"
                         android:textColor="@color/white"
                         android:textSize="14sp"
