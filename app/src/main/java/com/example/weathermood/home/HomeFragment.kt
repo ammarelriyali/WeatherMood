@@ -219,7 +219,7 @@ class HomeFragment : Fragment() {
             data.current!!.temp.toString() + '\u00B0'.toString() + "K"
         binding.tvStatusHome.text = data.current!!.weather[0].description
         binding.tvLastUpdateHome.text =
-            getString(com.example.weathermood.R.string.lastUpdate) +" "+ getTime(data.current!!.dt)
+            getString(com.example.weathermood.R.string.lastUpdate)+getTime(data.current!!.dt)
 
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)
