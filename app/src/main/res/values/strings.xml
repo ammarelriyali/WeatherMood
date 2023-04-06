@@ -25,7 +25,7 @@
     <string name="undo">Undo</string>
     <string name="weHadIssue">We had issue please try later</string>
     <string name="serverHadIssue">The sever had issue please try later</string>
-    <string name="lastUpdate">last update</string>
+    <string name="lastUpdate">last update </string>
     <string name="address">Adress</string>
     <string name="today">Today</string>
 </resources>

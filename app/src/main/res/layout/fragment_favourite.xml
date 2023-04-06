@@ -59,7 +59,7 @@
                 android:id="@+id/cl_favourite"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -202,7 +202,7 @@
                             app:layout_constraintTop_toTopOf="@+id/tv_lastUpdate_favourite" />
 
                         <ProgressBar
-                            android:id="@+id/progressBar"
+                            android:id="@+id/progressBar_fav"
                             style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Inverse"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
@@ -618,6 +618,7 @@
         android:textColor="?attr/colorOnSecondary"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/av_empty_location"
         app:layout_constraintEnd_toEndOf="@+id/av_empty_location"
         app:layout_constraintStart_toStartOf="@+id/av_empty_location"
