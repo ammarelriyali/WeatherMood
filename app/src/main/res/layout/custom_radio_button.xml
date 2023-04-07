@@ -1,0 +1,11 @@
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_radio_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:background="@drawable/custom_radio_button_background"
+    android:paddingStart="24dp"
+    android:paddingEnd="8dp"
+    android:button="@null"
+    android:text="@string/LocationHome"
+    android:textColor="@drawable/custom_radio_button_text_color" />
