@@ -77,8 +77,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        MySharedPreference.getInstance(requireActivity())
-
         val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), Serves()))
 
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
@@ -87,31 +85,42 @@ class HomeFragment : Fragment() {
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
 
+        try {
+            binding.rvHourlyWeatherHome.apply {
+                adapter = hourlyAdapter
+                layoutManager =
+                    LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            }
+            binding.rvDaliyWeatherHome.apply {
+                adapter = dailyAdapter
+                layoutManager = object : LinearLayoutManager(requireContext()) {
+                    override fun canScrollVertically() = false
+                }
+            }
+            binding.ivRefreshHome.setOnClickListener() {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.ivRefreshHome.visibility = View.GONE
+                handleIsOnlineState()
+            }
 
-        binding.rvHourlyWeatherHome.apply {
-            adapter = hourlyAdapter
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            binding.llLoctionName.setOnClickListener() {
+                showDialog()
+            }
+        }catch (e:java.lang.Exception){
+            Log.i(TAG, "onCreateView: ${e.message}")
         }
-        binding.rvDaliyWeatherHome.apply {
-            adapter = dailyAdapter
-            layoutManager = object : LinearLayoutManager(requireContext()) { override fun canScrollVertically() = false }
-        }
-        binding.ivRefreshHome.setOnClickListener() {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.ivRefreshHome.visibility = View.GONE
-            handleIsOnlineState()
-        }
-
-        binding.llLoctionName.setOnClickListener(){
-            showDialog()
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewModel.response.collect() {
                 when (it) {
                     is ResponseStateHome.SuccessApi -> {
-                        setData(it.data)
+                       try {
+                           
+                       
+                            setData(it.data)}
+                       catch (e:java.lang.Exception){
+                           Log.i(TAG, "onCreateView: $e")
+                       }
                         viewModel.insertCall(OneCallHome(oneCall = it.data).apply {
                             this.city = this@HomeFragment.city ?: "Empty"
                         })
@@ -121,7 +130,14 @@ class HomeFragment : Fragment() {
                         this@HomeFragment.city = it.data.city
                         this@HomeFragment.lat = it.data.oneCall.lat.toString()
                         this@HomeFragment.lon = it.data.oneCall.lon.toString()
-                        setData(it.data.oneCall)
+
+                       try {
+                           
+                       
+                            setData(it.data.oneCall)}
+                       catch (e:java.lang.Exception){
+                           Log.i(TAG, "onCreateView: ${e.message}")
+                       }
                         disableShimmer()
                     }
                     is ResponseStateHome.Failure -> {
@@ -130,7 +146,7 @@ class HomeFragment : Fragment() {
                     }
                     is ResponseStateHome.FailureHomeResponse -> {
                         Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
-                       Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
+                        Log.i(TAG, "onCreate: ${it.data}  :  ${it.msg}")
                         Snackbar.make(
                             requireActivity().findViewById(android.R.id.content),
                             "the server had issue pls try later",
@@ -216,10 +232,14 @@ class HomeFragment : Fragment() {
 
         binding.tvDateHome.text = getDate(data.current!!.dt)
         binding.tvTempHome.text =
-            data.current!!.temp.toString() + '\u00B0'.toString() + "K"
+            data.current!!.temp.toString() + '\u00B0'.toString() + when (MySharedPreference.getUnits()) {
+                "metric" -> "C"
+                "imperial" -> "F"
+                else -> "K"
+            }
         binding.tvStatusHome.text = data.current!!.weather[0].description
         binding.tvLastUpdateHome.text =
-            getString(com.example.weathermood.R.string.lastUpdate)+getTime(data.current!!.dt)
+            getString(com.example.weathermood.R.string.lastUpdate) + getTime(data.current!!.dt)
 
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)
@@ -237,25 +257,45 @@ class HomeFragment : Fragment() {
             )
             .into(binding.ivIconHome)
         binding.tvHumidityHome.text = data.current?.humidity.toString() + " %"
+        val unit = getUnit()
         binding.tvWindSpeedHome.text =
-            data.current?.wind_speed.toString() + " m/s"  //check about the وحده
-        binding.tvPressureHome.text = data.current?.pressure.toString() + " hPa"
+            data.current?.wind_speed.toString() + unit //check about the وحده
+        binding.tvPressureHome.text =
+            data.current?.pressure.toString() + if (MySharedPreference.getLanguage() == "en") "hPa" else "بار"
         binding.tvCloudsHome.text = data.current?.clouds.toString() + " %"
     }
 
+    private fun getUnit(): String = when (MySharedPreference.getLanguage()) {
+        "en" -> when (MySharedPreference.getUnits()) {
+            "imperial" -> " m/h"
+            else -> " m/s"
+        }
+        else -> when (MySharedPreference.getUnits()) {
+            "imperial" -> " م/س"
+            else -> " م/ث"
+        }
+    }
+
     private fun enableShimmer() {
-        binding.clHome.visibility = View.GONE
-        binding.shimmerHome.visibility = View.VISIBLE
-        binding.shimmerHome.startShimmer()
+        try {
+            binding.clHome.visibility = View.GONE
+            binding.shimmerHome.visibility = View.VISIBLE
+            binding.shimmerHome.startShimmer()
+        } catch (e:java.lang.Exception) {
+            Log.i(TAG, "enableShimmer: $e")
+        }
     }
 
     private fun disableShimmer() {
-        binding.shimmerHome.stopShimmer()
-        binding.shimmerHome.visibility = View.GONE
-        binding.clHome.visibility = View.VISIBLE
-        binding.ivRefreshHome.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
-
+        try{
+            binding.shimmerHome.stopShimmer()
+            binding.shimmerHome.visibility = View.GONE
+            binding.clHome.visibility = View.VISIBLE
+            binding.ivRefreshHome.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+        }catch (e:java.lang.Exception) {
+            Log.i(TAG, "enableShimmer: $e")
+        }
     }
 
     override fun onDestroyView() {
@@ -321,16 +361,16 @@ class HomeFragment : Fragment() {
             val address: MutableList<Address>? =
                 geocoder.getFromLocation(lat.toDouble(), lon.toDouble(), 1)
             if (address.isNullOrEmpty() || address.get(0).getAddressLine(0) == null)
-                city="empty"
-            else{
+                city = "empty"
+            else {
                 val arr = address?.get(0)?.getAddressLine(0)!!.split(",")
-                if (arr.size>1)
-                    city=arr[1]
+                if (arr.size > 1)
+                    city = arr[1]
                 else
-                    city=arr[0]
+                    city = arr[0]
             }
-            withContext(Dispatchers.Main){
-                binding.tvLocationHome.text=city
+            withContext(Dispatchers.Main) {
+                binding.tvLocationHome.text = city
             }
         }
     }
@@ -418,7 +458,5 @@ class HomeFragment : Fragment() {
         }
         return false
     }
-
-
 }
 

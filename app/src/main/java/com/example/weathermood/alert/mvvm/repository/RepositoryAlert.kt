@@ -7,7 +7,7 @@ import com.example.weathermood.remoltydata.RemotelyDataSource
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
-class RepositoryFavorite(val local: LocalData, val remotelyDataSource: RemotelyDataSource) :
+class RepositoryAlert(val local: LocalData, val remotelyDataSource: RemotelyDataSource) :
     IRepositoryAlert {
     override fun getFavItems(): Flow<List<FavouriteLocation>> {
         return local.getFavItems()

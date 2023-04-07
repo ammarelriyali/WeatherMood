@@ -8,7 +8,7 @@ import com.example.weathermood.model.FavouriteLocation
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class FavouriteViewModel(val repository: RepositoryAlert) : ViewModel() {
+class AlertViewModel(val repository: RepositoryAlert) : ViewModel() {
     private var _oneCall: MutableStateFlow<ResponseStateFav> =
         MutableStateFlow(ResponseStateFav.Loading)
     val response: MutableStateFlow<ResponseStateFav> = _oneCall

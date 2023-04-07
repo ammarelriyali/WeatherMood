@@ -42,13 +42,13 @@ class SettingFragment : Fragment() {
             binding.rbLanguage.check(R.id.rb_arbic)
 
         when (MySharedPreference.getUnits()) {
-            "kelvin" -> {
+            "default" -> {
                 binding.rbUnits.check(R.id.rb_kelvin)
             }
-            "Celsius" -> {
+            "metric" -> {
                 binding.rbUnits.check(R.id.rb_celsius)
             }
-            "Fahrenheit" -> {
+            "imperial" -> {
                 binding.rbUnits.check(R.id.rb_fahrenheit)
             }
         }
@@ -71,13 +71,13 @@ class SettingFragment : Fragment() {
         binding.rbUnits.setOnCheckedChangeListener { radioGroup: RadioGroup, i: Int ->
             when (i) {
                 R.id.rb_kelvin -> {
-                    MySharedPreference.setUnit("kelvin")
+                    MySharedPreference.setUnit("default")
                 }
                 R.id.rb_celsius -> {
-                    MySharedPreference.setUnit("Celsius")
+                    MySharedPreference.setUnit("metric")
                 }
                 R.id.rb_fahrenheit -> {
-                    MySharedPreference.setUnit("Fahrenheit")
+                    MySharedPreference.setUnit("imperial")
                 }
             }
         }
@@ -87,7 +87,6 @@ class SettingFragment : Fragment() {
     }
 
     private fun setLocal(lang: String) {
-        Toast.makeText(requireContext(), lang, Toast.LENGTH_LONG).show()
         val local = Locale(lang)
         Locale.setDefault(local)
         val config = Configuration()

@@ -14,10 +14,10 @@ class HomeViewModel(val repository: IRepositoryHome) : ViewModel() {
     private val TAG ="TAGG"
     private var _oneCall: MutableStateFlow<ResponseStateHome> = MutableStateFlow(ResponseStateHome.Loading)
     val response: MutableStateFlow<ResponseStateHome> = _oneCall
-    fun getCurrentWeather(lon: String, lat: String, unit: String = "default", lang: String = "en") {
+    fun getCurrentWeather(lon: String, lat: String) {
         Log.i(TAG, "getCurrentWeather: ")
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getCurrentLocation(lon, lat, unit, lang)
+            repository.getCurrentLocation(lon, lat )
                 .catch { _oneCall.value= ResponseStateHome.Failure(it) }
                 .collect() {
                     if (it.isSuccessful){

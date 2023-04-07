@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,8 +21,8 @@ import com.example.mvvm.retroit.Serves
 import com.example.weathermood.R
 import com.example.weathermood.databinding.FragmentFavouriteBinding
 import com.example.weathermood.favourite.mvvm.FavouriteViewFactory
-import com.example.weathermood.favourite.mvvm.FavouriteViewModel
-import com.example.weathermood.favourite.mvvm.repository.RepositoryFavorite
+import com.example.weathermood.favourite.mvvm.AlertViewModel
+import com.example.weathermood.favourite.mvvm.repository.RepositoryAlert
 import com.example.weathermood.home.DailyAdapter
 import com.example.weathermood.home.HourlyAdapter
 import com.example.weathermood.model.FavouriteLocation
@@ -45,16 +44,16 @@ class FavouriteFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    lateinit var viewModel: FavouriteViewModel
+    lateinit var viewModel: AlertViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val favouriteViewFactory =
-            FavouriteViewFactory(RepositoryFavorite(LocalDataClass(requireContext()), Serves()))
+            FavouriteViewFactory(RepositoryAlert(LocalDataClass(requireContext()), Serves()))
         viewModel =
-            ViewModelProvider(this, favouriteViewFactory).get(FavouriteViewModel::class.java)
+            ViewModelProvider(this, favouriteViewFactory).get(AlertViewModel::class.java)
         _binding = FragmentFavouriteBinding.inflate(inflater, container, false)
         binding.avEmptyLocation.playAnimation()
         binding.fabAddLocation.setOnClickListener() {

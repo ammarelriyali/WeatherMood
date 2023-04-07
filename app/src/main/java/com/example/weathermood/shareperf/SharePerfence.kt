@@ -1,6 +1,5 @@
 package com.example.weathermood.shareperf
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -8,7 +7,7 @@ import android.util.Log
 object MySharedPreference{
     private const val NAME = "MySharedPreferenceWM"
     private lateinit var sharedPreferences :SharedPreferences
-    fun getInstance(activity: Activity){
+    fun getInstance(activity: Context){
         Log.i("TAG", "getInstance: ")
         sharedPreferences = activity.getSharedPreferences(NAME, Context.MODE_PRIVATE)
     }
@@ -37,7 +36,7 @@ object MySharedPreference{
 
     fun getUnits(): String {
 
-        return sharedPreferences.getString("unit","kelvin")!!
+        return sharedPreferences.getString("unit","default")!!
     }
 
     fun setLanguage(s: String) {

@@ -22,32 +22,20 @@
             android:background="@drawable/side_nav_bar">
 
             <TextView
-                android:id="@+id/tv_temp_home"
-                style="@style/textViewOnCardHome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="24dp"
-                android:text="@string/address"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/tv_location_fav" />
-
-            <TextView
                 android:id="@+id/tv_address_fav"
                 style="@style/textViewOnCardHome"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="24dp"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_temp_home"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_temp_home"
-                app:layout_constraintTop_toTopOf="@+id/tv_temp_home" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ib_delete_fav"
+                app:layout_constraintStart_toStartOf="@+id/imageView"
+                app:layout_constraintTop_toBottomOf="@+id/ib_delete_fav" />
 
             <ImageView
                 android:id="@+id/imageView"

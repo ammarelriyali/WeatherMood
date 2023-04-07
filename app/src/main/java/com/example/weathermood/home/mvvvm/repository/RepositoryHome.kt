@@ -11,8 +11,8 @@ import retrofit2.Response
 class RepositoryHome(private val localData: LocalData, private val remotelyData: RemotelyDataSource) :
     IRepositoryHome {
 
-    override  fun getCurrentLocation(lon: String, lat: String, unit: String, lang: String): Flow<Response<OneCall>> {
-        return remotelyData.getCurrentLocation(lon,lat,unit,lang)
+    override  fun getCurrentLocation(lon: String, lat: String): Flow<Response<OneCall>> {
+        return remotelyData.getCurrentLocation(lon,lat)
     }
 
     override suspend fun setWeather(body: OneCallHome){

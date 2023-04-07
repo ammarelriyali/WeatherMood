@@ -36,4 +36,9 @@
     <string name="arabic">Arabic</string>
     <string name="english">English</string>
     <string name="language">Language</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="pressure">Pressure</string>
+    <string name="clouds">Clouds</string>
+    <string name="version">version 1.0.0</string>
 </resources>

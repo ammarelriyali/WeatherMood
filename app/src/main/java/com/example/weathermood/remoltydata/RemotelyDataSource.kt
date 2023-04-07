@@ -6,9 +6,9 @@ import retrofit2.Response
 
 
 interface RemotelyDataSource {
-     fun getCurrentLocation(log: String, lat: String, unit: String , lang: String
+     fun getCurrentLocation(log: String, lat: String
     ): Flow<Response<OneCall>>
 
-    fun getAlerts(log: String, lat: String, unit: String , lang: String
+    fun getAlerts(log: String, lat: String
     ): Flow<Response<OneCall>>
 }

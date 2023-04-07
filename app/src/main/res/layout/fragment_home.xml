@@ -61,7 +61,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="wind speed"
+                        android:text="@string/wind_speed"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_wind_speed_home"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -70,12 +70,13 @@
                         android:id="@+id/tv_wind_speed_home"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="16dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/tv_wind_speed_header_home"
+                        app:layout_constraintStart_toEndOf="@+id/iv_wind_speed_home"
                         app:layout_constraintTop_toBottomOf="@+id/tv_wind_speed_header_home" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -317,7 +318,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="Humidity"
+                        android:text="@string/humidity"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_humidity_home"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -326,12 +327,13 @@
                         android:id="@+id/tv_humidity_home"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="16dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/tv_header_humidity_home"
+                        app:layout_constraintStart_toEndOf="@+id/iv_humidity_home"
                         app:layout_constraintTop_toBottomOf="@+id/tv_header_humidity_home" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -373,7 +375,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="Pressure"
+                        android:text="@string/pressure"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_pressure_home"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -432,7 +434,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:text="Clouds"
+                        android:text="@string/clouds"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_clouds_home"
                         app:layout_constraintTop_toTopOf="parent" />
