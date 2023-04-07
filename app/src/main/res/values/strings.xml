@@ -28,4 +28,12 @@
     <string name="lastUpdate">last update </string>
     <string name="address">Adress</string>
     <string name="today">Today</string>
+    <string name="location">Location</string>
+    <string name="units">Units</string>
+    <string name="kelvin">Kelvin , metre/sec</string>
+    <string name="celsius">Celsius , metre/sec</string>
+    <string name="fahrenheit">Fahrenheit , miles/hour</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="language">Language</string>
 </resources>

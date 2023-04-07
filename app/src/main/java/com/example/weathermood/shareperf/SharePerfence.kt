@@ -31,5 +31,26 @@ object MySharedPreference{
         editor.apply()
     }
 
+    fun getLanguage(): String {
+        return sharedPreferences.getString("language","en")!!
+    }
+
+    fun getUnits(): String {
+
+        return sharedPreferences.getString("unit","kelvin")!!
+    }
+
+    fun setLanguage(s: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("language",s)
+        editor.apply()
+    }
+
+    fun setUnit(s: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("unit",s)
+        editor.apply()
+    }
+
 
 }

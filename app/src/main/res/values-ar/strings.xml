@@ -20,4 +20,12 @@
     <string name="lastUpdate">"اخر تحديث  "</string>
     <string name="address">العنوان</string>
     <string name="today">اليوم</string>
+    <string name="location">Location</string>
+    <string name="units">Units</string>
+    <string name="kelvin">كليفن , متر/ثانية</string>
+    <string name="celsius">سليزس , متر/ثانية</string>
+    <string name="fahrenheit">Fahrenheit , metre/sec</string>
+    <string name="arabic">العربية</string>
+    <string name="english">English</string>
+    <string name="language">اللغة</string>
 </resources>
