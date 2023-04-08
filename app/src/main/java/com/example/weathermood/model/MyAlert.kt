@@ -13,6 +13,9 @@ data class MyAlert (
     var dateTo:Long = 0L,
     var hourTo:Int = 0,
     var minuteTo :Int = 0,
+    var lat:Double = 0.0,
+    var log:Double = 0.0 ,
+    var city :String="empty",
     var event :String="Rain",
     var typeOfAlert:String="alert"
 )

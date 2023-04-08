@@ -11,12 +11,14 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import com.example.mvvm.DB.LocalDataClass
 import com.example.weathermood.R
 import com.example.weathermood.databinding.FragmentMyAlertBinding
 import com.example.weathermood.model.MyAlert
 import com.example.weathermood.model.OneCallHome
+import com.example.weathermood.utilities.Helper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -52,6 +54,9 @@ class MyAlertDialog : DialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {    local.getCall().collect(){
             current=it.get(0)
         } }
+        binding.bDeleteAlertDialog.setOnClickListener(){
+            dismiss()
+        }
 
         ArrayAdapter.createFromResource(
             requireContext()  ,
@@ -73,7 +78,6 @@ class MyAlertDialog : DialogFragment() {
             }
 
         }
-
         binding.radioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, i: Int ->
             if (i==R.id.rb_alert)
                 typeOfAlert="alert"
@@ -92,10 +96,14 @@ class MyAlertDialog : DialogFragment() {
                         dateTo  ,
                         hourTo,
                         minuteTo ,
+                        current.oneCall.lat,
+                        current.oneCall.lon,
+                        current.city,
                         event ,
                         typeOfAlert
                     ))
                 }
+                setFragmentResult("", Bundle())
                 dismiss()
             }
         }

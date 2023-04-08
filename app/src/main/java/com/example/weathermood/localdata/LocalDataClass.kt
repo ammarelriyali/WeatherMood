@@ -38,6 +38,14 @@ class LocalDataClass(context:Context) : LocalData {
        dao.insertAlert(myAlert)
     }
 
+    override fun getAlertItems(): Flow<List<MyAlert>> {
+       return dao.getAlertItems()
+    }
+
+    override suspend fun deleteAlertItme(it: MyAlert) {
+       dao.deleteAlert(it)
+    }
+
 
 }
 

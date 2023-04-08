@@ -51,6 +51,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 
 import java.util.*
+import kotlin.math.log
 
 class HomeFragment : Fragment() {
 
@@ -186,11 +187,11 @@ companion object{
 
     override fun onResume() {
         super.onResume()
+
         if (MySharedPreference.isFirstTime()) {
             showDialog()
             MySharedPreference.setFirstTime()
         } else if (args.isOpen &&isNotOpen) {
-            Log.i(TAG, "onResume: isopne")
             if (args.lat != "0.0") {
                 lat = args.lat
                 lon = args.log
@@ -199,11 +200,11 @@ companion object{
 
             }
         } else if (MySharedPreference.getWeatherFromMap()) {
-            Log.i(TAG, "onResume: getwheret")
             navigationFromHomeToMap()
             isNotOpen=true
-        } else
+        } else{
             getLocation()
+        }
         viewModel.getWeather()
     }
 
@@ -214,6 +215,7 @@ companion object{
         }
         setFragmentResultListener(Helper.REQUEST_KEY_GPS) { s: String, b: Bundle ->
             MySharedPreference.setWeatherFromMap(false)
+            Log.i(TAG, "setFragmentRes: ------")
             getLocation()
 
         }
@@ -340,7 +342,8 @@ companion object{
             else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-
+                       lon= location.longitude.toString()
+                       lat= location.latitude.toString()
                         handleIsOnlineState()
                     } catch (e: java.lang.Exception) {
                         Log.i(TAG, "getLocationData: gec ${e.message}")

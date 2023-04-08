@@ -51,4 +51,5 @@
     <string name="wind">رياح</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="alertType">Alert type</string>
 </resources>

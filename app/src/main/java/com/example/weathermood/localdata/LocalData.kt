@@ -13,5 +13,7 @@ interface LocalData{
     fun getFavItems():Flow<List<FavouriteLocation>>
     suspend fun deleteFavItem(data: FavouriteLocation)
     suspend fun setAlert(myAlert: MyAlert)
+    fun getAlertItems(): Flow<List<MyAlert>>
+    suspend fun deleteAlertItme(it: MyAlert)
 
 }

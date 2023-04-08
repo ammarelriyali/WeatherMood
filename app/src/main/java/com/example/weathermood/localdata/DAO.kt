@@ -24,4 +24,6 @@ interface DAO {
 
     @Query("Select * from MyAlert")
     fun getAlertItems(): Flow<List<MyAlert>>
+    @Delete
+    suspend fun deleteAlert(it: MyAlert)
 }

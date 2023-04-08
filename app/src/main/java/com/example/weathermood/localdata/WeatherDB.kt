@@ -10,7 +10,7 @@ import com.example.weathermood.model.MyAlert
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.model.OneCallHome
 
-@Database(entities = arrayOf(FavouriteLocation::class,OneCallHome::class,MyAlert::class), version = 3)
+@Database(entities = arrayOf(FavouriteLocation::class,OneCallHome::class,MyAlert::class), version = 4)
 @TypeConverters(DataConverter::class)
 abstract class WeatherDB : RoomDatabase() {
     abstract fun getDao(): DAO

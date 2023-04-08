@@ -2,6 +2,7 @@ package com.example.weathermood.alert.mvvm.repository
 
 import com.example.mvvm.DB.LocalData
 import com.example.weathermood.model.FavouriteLocation
+import com.example.weathermood.model.MyAlert
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.remoltydata.RemotelyDataSource
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,14 @@ class RepositoryAlert(val local: LocalData, val remotelyDataSource: RemotelyData
 
     override suspend fun deleteFavItem(data: FavouriteLocation) {
         local.deleteFavItem(data)
+    }
+
+    override fun getAlertItems(): Flow<List<MyAlert>> {
+        return local.getAlertItems()
+    }
+
+   override suspend   fun deleteAlertItem(it: MyAlert) {
+        local.deleteAlertItme(it)
     }
 
 }

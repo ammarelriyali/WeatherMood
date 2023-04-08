@@ -43,7 +43,8 @@
     <string name="version">version 1.0.0</string>
     <string name="no_alert"> No alert added</string>
     <string name="startItme">From</string>
-    <string name="time_to">TO</string>
+    <string name="time_to">To</string>
+
     <string name="alert">Alert</string>
     <string name="notification">Notification</string>
     <string name="selectTime">Select TIme</string>
@@ -59,6 +60,8 @@
     <string name="wind">Wind</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="alertType">Alert type</string>
+    <string name="eventType">Event </string>
     <string-array name="events_options">
         <item>@string/rain</item>
         <item>@string/storm</item>
