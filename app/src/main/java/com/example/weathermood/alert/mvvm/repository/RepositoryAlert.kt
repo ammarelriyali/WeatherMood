@@ -1,4 +1,4 @@
-package com.example.weathermood.favourite.mvvm.repository
+package com.example.weathermood.alert.mvvm.repository
 
 import com.example.mvvm.DB.LocalData
 import com.example.weathermood.model.FavouriteLocation

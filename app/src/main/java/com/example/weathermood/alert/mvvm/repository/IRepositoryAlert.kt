@@ -1,5 +1,5 @@
-package com.example.weathermood.favourite.mvvm.repository
 
+package com.example.weathermood.alert.mvvm.repository
 import com.example.weathermood.model.FavouriteLocation
 import com.example.weathermood.model.OneCall
 import kotlinx.coroutines.flow.Flow

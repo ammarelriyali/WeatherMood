@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.weathermood.localdata.DAO
 import com.example.weathermood.localdata.WeatherDB
 import com.example.weathermood.model.FavouriteLocation
+import com.example.weathermood.model.MyAlert
 import com.example.weathermood.model.OneCall
 import com.example.weathermood.model.OneCallHome
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +32,10 @@ class LocalDataClass(context:Context) : LocalData {
 
     override suspend fun deleteFavItem(data: FavouriteLocation) {
        dao.deleteFav(data)
+    }
+
+    override suspend fun setAlert(myAlert: MyAlert) {
+       dao.insertAlert(myAlert)
     }
 
 

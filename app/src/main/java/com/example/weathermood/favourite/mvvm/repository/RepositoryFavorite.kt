@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 class RepositoryFavorite(val local: LocalData, val remotelyDataSource: RemotelyDataSource) :
-    IRepositoryAlert {
+    IRepositoryFavorite {
     override fun getFavItems(): Flow<List<FavouriteLocation>> {
         return local.getFavItems()
     }

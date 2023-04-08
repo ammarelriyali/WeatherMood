@@ -2,12 +2,12 @@ package com.example.weathermood.favourite.mvvm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weathermood.favourite.mvvm.repository.RepositoryAlert
+import com.example.weathermood.favourite.mvvm.repository.RepositoryFavorite
 
-class FavouriteViewFactory(private val repositoryFavorite: RepositoryAlert):ViewModelProvider.Factory {
+class FavouriteViewFactory(private val repositoryFavorite: RepositoryFavorite):ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return if (modelClass.isAssignableFrom(AlertViewModel::class.java)){
-            AlertViewModel(repositoryFavorite) as T
+        return if (modelClass.isAssignableFrom(FavouriteViewModel::class.java)){
+            FavouriteViewModel(repositoryFavorite) as T
         } else
             throw java.lang.IllegalArgumentException("Wrong view Model")
     }

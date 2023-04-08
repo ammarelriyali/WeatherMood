@@ -1,8 +1,8 @@
-package com.example.weathermood.favourite.mvvm
+package com.example.weathermood.alert.mvvm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weathermood.favourite.mvvm.repository.RepositoryAlert
+import com.example.weathermood.alert.mvvm.repository.RepositoryAlert
 
 class AlertViewFactory(private val repositoryAlert: RepositoryAlert):ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

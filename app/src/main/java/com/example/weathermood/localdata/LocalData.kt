@@ -1,6 +1,7 @@
 package com.example.mvvm.DB
 
 import com.example.weathermood.model.FavouriteLocation
+import com.example.weathermood.model.MyAlert
 import com.example.weathermood.model.OneCallHome
 import kotlinx.coroutines.flow.Flow
 
@@ -11,5 +12,6 @@ interface LocalData{
     suspend fun insertFav(favouriteLocation: FavouriteLocation)
     fun getFavItems():Flow<List<FavouriteLocation>>
     suspend fun deleteFavItem(data: FavouriteLocation)
+    suspend fun setAlert(myAlert: MyAlert)
 
 }

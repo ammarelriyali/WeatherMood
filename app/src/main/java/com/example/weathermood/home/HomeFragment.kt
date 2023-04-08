@@ -62,7 +62,9 @@ class HomeFragment : Fragment() {
     private val TAG: String = "TAGG"
     private var _binding: FragmentHomeBinding? = null
     private lateinit var fusedClient: FusedLocationProviderClient
-
+companion object{
+    var isNotOpen:Boolean=true
+}
 
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
@@ -115,8 +117,8 @@ class HomeFragment : Fragment() {
                 when (it) {
                     is ResponseStateHome.SuccessApi -> {
                        try {
-                           
-                       
+
+
                             setData(it.data)}
                        catch (e:java.lang.Exception){
                            Log.i(TAG, "onCreateView: $e")
@@ -132,8 +134,6 @@ class HomeFragment : Fragment() {
                         this@HomeFragment.lon = it.data.oneCall.lon.toString()
 
                        try {
-                           
-                       
                             setData(it.data.oneCall)}
                        catch (e:java.lang.Exception){
                            Log.i(TAG, "onCreateView: ${e.message}")
@@ -189,16 +189,19 @@ class HomeFragment : Fragment() {
         if (MySharedPreference.isFirstTime()) {
             showDialog()
             MySharedPreference.setFirstTime()
-        } else if (args.isOpen) {
+        } else if (args.isOpen &&isNotOpen) {
             Log.i(TAG, "onResume: isopne")
             if (args.lat != "0.0") {
                 lat = args.lat
                 lon = args.log
+                isNotOpen=false
                 handleIsOnlineState()
+
             }
         } else if (MySharedPreference.getWeatherFromMap()) {
             Log.i(TAG, "onResume: getwheret")
             navigationFromHomeToMap()
+            isNotOpen=true
         } else
             getLocation()
         viewModel.getWeather()
@@ -229,7 +232,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setData(data: OneCall) {
-
+        binding.tvLocationHome.text=city
         binding.tvDateHome.text = getDate(data.current!!.dt)
         binding.tvTempHome.text =
             data.current!!.temp.toString() + '\u00B0'.toString() + when (MySharedPreference.getUnits()) {
@@ -337,9 +340,7 @@ class HomeFragment : Fragment() {
             else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        lat = location.latitude.toString()
-                        lon = location.longitude.toString()
-                        getCityName()
+
                         handleIsOnlineState()
                     } catch (e: java.lang.Exception) {
                         Log.i(TAG, "getLocationData: gec ${e.message}")

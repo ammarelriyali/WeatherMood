@@ -19,5 +19,9 @@ interface DAO {
     @Delete
    suspend fun deleteFav(data: FavouriteLocation)
 
+   @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAlert(myAlert: MyAlert)
 
+    @Query("Select * from MyAlert")
+    fun getAlertItems(): Flow<List<MyAlert>>
 }

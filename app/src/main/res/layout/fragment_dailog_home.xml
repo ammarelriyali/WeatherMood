@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="#00FFFFFF">
+    app:cardBackgroundColor="#00FFFFFF"
+    tools:context=".home.MyHomeDialog">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -22,7 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/ll_maps"
-            app:layout_constraintTop_toBottomOf="@+id/textView5">
+            app:layout_constraintTop_toBottomOf="@+id/s_alert_type">
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -75,7 +77,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/s_alert_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
