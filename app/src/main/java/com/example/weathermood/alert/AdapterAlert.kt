@@ -39,7 +39,7 @@ class AdapterAlert(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.tvLocationAlert.text=data[position].city
         holder.binding.tvEventAlert.text=data[position].event
-        holder.binding.tvFromTime.text=getDate(data[position].dateForm)+" "+data[position].hourFrom+":"+data[position].minuteFrom
+        holder.binding.tvFromTime.text=getDate(data[position].dateForm+18312800000L)+" "+data[position].hourFrom+":"+data[position].minuteFrom
         holder.binding.tvToTime.text=getDate(data[position].dateTo)+" "+data[position].hourTo+":"+data[position].minuteTo
         holder.binding.ibDeleteAlert.setOnClickListener(){onDelete(data[position])}
         holder.binding.tvAlertType.text=data[position].typeOfAlert
@@ -47,7 +47,7 @@ class AdapterAlert(
     private fun getDate(s: Long): String? {
         try {
             val sdf = SimpleDateFormat("dd-MMMM")
-            val netDate = Date(s * 1000)
+            val netDate = Date(s  )
             return sdf.format(netDate)
         } catch (e: Exception) {
             return e.toString()

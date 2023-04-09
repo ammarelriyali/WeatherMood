@@ -29,34 +29,29 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
 
     private suspend fun getData(id: Int) {
         val alert = repository.getAlertDB(id)
-        Log.i("TAG", "getData: -----------------${alert.lat}  ${alert.log}")
         repository.getAlert(alert.lat.toString(), alert.log.toString()).catch {
             Log.i(
                 "TAG",
                 "getData: ${it.message}"
             )
         }.collect() {
-            Log.i("TAG", "getData: -----------------1$id")
             if (it.isSuccessful) {
-                Log.i("TAG", "getData: -----------------2$id ${checkTimeLimit(alert)}")
                 if (checkTimeLimit(alert)) {
-                    Log.i("TAG", "getData: -----------------3$id")
-                    val delay: Long = getDelay(alert)
                     if (it.body()?.alerts.isNullOrEmpty()) {
                         setOneTimeWorkManger(
-                            delay,
                             alert.id,
                             it.body()?.current?.weather?.get(0)?.description ?: "",
+                            alert.typeOfAlert,
                         )
                     } else {
+                        val x =it?.body()?.alerts?.get(0)?.tags?.filter { it==alert.event }
                         setOneTimeWorkManger(
-                            delay,
                             alert.id,
-                            it?.body()?.alerts?.get(0)?.tags?.get(0) ?: "",
+                            (if (x.isNullOrEmpty()) x?.get(0) else it.body()?.current?.weather?.get(0)?.description ?: "")!!,
+                            alert.typeOfAlert
                         )
                     }
                 } else {
-                    Log.i("TAG", "getData: -----------------4$id")
                     repository.deleteAlert(alert)
                     WorkManager.getInstance().cancelAllWorkByTag("$id")
                 }
@@ -71,10 +66,10 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
 
     }
 
-    private fun setOneTimeWorkManger(delay: Long, id: Int?, description: String) {
-        Log.i("TAG", "getData: -----------------5$id")
+    private fun setOneTimeWorkManger(id: Int?, description: String, typeOfAlert: String) {
         val data = Data.Builder()
         data.putString("description", description)
+        data.putString("type", typeOfAlert)
 
         val constraints = Constraints.Builder()
             .setRequiresBatteryNotLow(true)
@@ -85,7 +80,7 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         val oneTimeWorkRequest = OneTimeWorkRequest.Builder(
             AlertOneTimeWorkManger::class.java,
         )
-            .setInitialDelay(delay, TimeUnit.SECONDS)
+            .setInitialDelay(0, TimeUnit.SECONDS)
             .setConstraints(constraints)
             .setInputData(data.build())
             .build()
@@ -97,13 +92,6 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         )
     }
 
-    private fun getDelay(alert: AlertModel): Long {
-        val hour =
-            TimeUnit.HOURS.toSeconds(Calendar.getInstance().get(Calendar.HOUR_OF_DAY).toLong())
-        val minute =
-            TimeUnit.MINUTES.toSeconds(Calendar.getInstance().get(Calendar.MINUTE).toLong())
-        return (alert.minuteFrom + alert.hourFrom) - ((hour + minute) - (2 * 3600L))
-    }
 
     private fun checkTimeLimit(alert: AlertModel): Boolean {
         val year = Calendar.getInstance().get(Calendar.YEAR)

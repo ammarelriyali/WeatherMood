@@ -25,14 +25,11 @@ class AlertService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        // Get Data from Work Manager
         val description = intent?.getStringExtra("description")
 
-        // Create Notification Channel
         notificationChannel()
         startForeground(FOREGROUND_ID, makeNotification(description!!))
 
-        //start window manger
         if (Settings.canDrawOverlays(this)) {
             alertWindowManger = AlertView(this, description)
             alertWindowManger!!.initializeWindowManager()
@@ -52,7 +49,7 @@ class AlertService : Service() {
         return NotificationCompat.Builder(applicationContext, "$CHANNEL_ID")
             .setSmallIcon(R.drawable.twotone_notifications_24)
             .setContentText(description)
-            .setContentTitle("Weather Alarm")
+            .setContentTitle(applicationContext.getString(R.string.header_notification))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(
                 NotificationCompat.BigTextStyle()

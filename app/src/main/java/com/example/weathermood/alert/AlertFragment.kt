@@ -1,7 +1,9 @@
 package com.example.weathermood.alert
 
+import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -30,6 +33,7 @@ import kotlinx.coroutines.launch
 
 class AlertFragment : Fragment() {
 
+    private val My_PERMISSION_ID: Int=12
     private val TAG = "TAGG"
     private var _binding: FragmentAlertBinding? = null
     lateinit var viewModel: AlertViewModel
@@ -54,6 +58,8 @@ class AlertFragment : Fragment() {
         binding.fabAddAlert.setOnClickListener() {
             if (!Settings.canDrawOverlays(requireContext()))
                 checkPermissionOfOverlay()
+            else if (!checkPermissions())
+                askForPermissions()
             else
                 showDialog()
         }
@@ -122,20 +128,55 @@ class AlertFragment : Fragment() {
     private fun checkPermissionOfOverlay() {
 
 
-            val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
-            alertDialogBuilder.setTitle("Display on top")
-                .setMessage("You Should let us to draw on top")
-                .setPositiveButton("Okay") { dialog: DialogInterface, _: Int ->
+        val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
+        alertDialogBuilder.setTitle("Display on top")
+            .setMessage("You Should let us to draw on top")
+            .setPositiveButton("Okay") { dialog: DialogInterface, _: Int ->
 
-                    val intent = Intent(
-                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + requireContext().applicationContext.packageName)
-                    )
-                    startActivityForResult(intent, 1)
-                    dialog.dismiss()
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + requireContext().applicationContext.packageName)
+                )
+                startActivityForResult(intent, 1)
+                dialog.dismiss()
 
-                }.setNegativeButton("No") { dialog: DialogInterface, _: Int ->
-                    dialog.dismiss()
-                }.show()
-        }
+            }.setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }.show()
     }
+    private fun askForPermissions() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                Manifest.permission.POST_NOTIFICATIONS
+            ),
+            My_PERMISSION_ID
+        )
+    }
+    private fun checkPermissions(): Boolean {
+        var result = false
+        Log.i("TAG", "checkPermissions: ")
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) ==
+                    PackageManager.PERMISSION_GRANTED)
+
+         {
+            Log.i(TAG, "checkPermissions: true ")
+            result = true
+        }
+        return result
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == My_PERMISSION_ID)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showDialog()
+            }
+    }
+}

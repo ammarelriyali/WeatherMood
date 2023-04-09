@@ -5,10 +5,7 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import com.example.weathermood.R
 import com.example.weathermood.databinding.ViewAlertBinding
 
@@ -36,14 +33,15 @@ class AlertView( private val context: Context,private val description: String) {
             WindowManager.LayoutParams.TYPE_PHONE
         }
         windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val width = (context.resources.displayMetrics.widthPixels * 0.85).toInt()
         val params = WindowManager.LayoutParams(
-            width,
+            WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             LAYOUT_FLAG,
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LOCAL_FOCUS_MODE,
             PixelFormat.TRANSLUCENT
         )
+        params.gravity = Gravity.START or Gravity.TOP
+
         windowManager.addView(view, params)
     }
 
