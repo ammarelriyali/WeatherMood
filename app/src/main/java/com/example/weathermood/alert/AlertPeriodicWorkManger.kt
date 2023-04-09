@@ -1,17 +1,28 @@
 package com.example.weathermood.alert
 
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.RemotelyDataSource
+import com.example.weathermood.R
 import com.example.weathermood.alert.mvvm.repository.RepositoryAlert
 import com.example.weathermood.model.AlertModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
+
+private const val CHANNEL_ID = 2
 
 class AlertPeriodicWorkManger(private val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -37,17 +48,19 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         }.collect() {
             if (it.isSuccessful) {
                 if (checkTimeLimit(alert)) {
+                    delay(2000)
                     if (it.body()?.alerts.isNullOrEmpty()) {
                         setOneTimeWorkManger(
-                            alert.id,
                             it.body()?.current?.weather?.get(0)?.description ?: "",
                             alert.typeOfAlert,
                         )
                     } else {
-                        val x =it?.body()?.alerts?.get(0)?.tags?.filter { it==alert.event }
+                        val x = it?.body()?.alerts?.get(0)?.tags?.filter { it == alert.event }
                         setOneTimeWorkManger(
-                            alert.id,
-                            (if (x.isNullOrEmpty()) x?.get(0) else it.body()?.current?.weather?.get(0)?.description ?: "")!!,
+
+                            (if (x.isNullOrEmpty()) x?.get(0) else it.body()?.current?.weather?.get(
+                                0
+                            )?.description ?: "")!!,
                             alert.typeOfAlert
                         )
                     }
@@ -66,30 +79,17 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
 
     }
 
-    private fun setOneTimeWorkManger(id: Int?, description: String, typeOfAlert: String) {
-        val data = Data.Builder()
-        data.putString("description", description)
-        data.putString("type", typeOfAlert)
-
-        val constraints = Constraints.Builder()
-            .setRequiresBatteryNotLow(true)
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-
-        val oneTimeWorkRequest = OneTimeWorkRequest.Builder(
-            AlertOneTimeWorkManger::class.java,
-        )
-            .setInitialDelay(0, TimeUnit.SECONDS)
-            .setConstraints(constraints)
-            .setInputData(data.build())
-            .build()
-
-        WorkManager.getInstance(context).enqueueUniqueWork(
-            "$id",
-            ExistingWorkPolicy.REPLACE,
-            oneTimeWorkRequest
-        )
+    @SuppressLint("MissingPermission")
+    private fun setOneTimeWorkManger(description: String, typeOfAlert: String) {
+        if (typeOfAlert == "alert")
+            startAlertService(description)
+        else {
+            notificationChannel()
+            with(NotificationManagerCompat.from(context)) {
+                val notificationId = 0
+                notify(notificationId, createNotification(description, context).build())
+            }
+        }
     }
 
 
@@ -112,5 +112,42 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         return timestamp.time
     }
 
+    private fun createNotification(description: String, context: Context) =
+        NotificationCompat.Builder(applicationContext, "$CHANNEL_ID")
+            .setSmallIcon(R.drawable.twotone_notifications_24)
+            .setContentText(description)
+            .setContentTitle(context.getString(R.string.header_notification))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(description)
+            )
+            .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
+            .setAutoCancel(true)
+
+    private fun notificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: String = context.getString(R.string.channel_name)
+            val description = context.getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("$CHANNEL_ID", name, importance)
+            channel.enableVibration(true)
+            channel.description = description
+            val notificationManager: NotificationManager = context.getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager?.createNotificationChannel(channel)
+        }
+    }
+
+    private fun startAlertService(description: String) {
+        val intent = Intent(applicationContext, AlertService::class.java)
+        intent.putExtra("description", description)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(applicationContext, intent)
+        } else {
+            applicationContext.startService(intent)
+        }
+    }
 
 }

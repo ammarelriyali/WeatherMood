@@ -186,7 +186,6 @@ companion object{
 
     override fun onResume() {
         super.onResume()
-
         if (MySharedPreference.isFirstTime()) {
             showDialog()
             MySharedPreference.setFirstTime()
@@ -196,7 +195,6 @@ companion object{
                 lon = args.log
                 isNotOpen=false
                 handleIsOnlineState()
-
             }
         } else if (MySharedPreference.getWeatherFromMap()) {
             navigationFromHomeToMap()

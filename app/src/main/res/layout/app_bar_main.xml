@@ -10,18 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/backgroundColor"
-        app:elevation="0dp"
-        android:theme="@style/Theme.WeatherMood.AppBarOverlay">
+        android:paddingBottom="8dp"
+        android:theme="@style/Theme.WeatherMood.AppBarOverlay"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:elevation="4dp"
-            android:layout_marginTop="8dp"
             android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/background_toolbar"
+            android:elevation="4dp"
+            android:paddingBottom="8dp"
             app:popupTheme="@style/Theme.WeatherMood.PopupOverlay"
             app:titleTextColor="?attr/colorOnPrimary" />
 
