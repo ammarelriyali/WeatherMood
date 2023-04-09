@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mvvm.DB.LocalDataClass
-import com.example.mvvm.retroit.Serves
+import com.example.mvvm.retroit.RemotelyDataSource
 import com.example.weathermood.R
 import com.example.weathermood.databinding.FragmentFavouriteBinding
 import com.example.weathermood.favourite.mvvm.FavouriteViewFactory
@@ -51,7 +51,7 @@ class FavouriteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val favouriteViewFactory =
-            FavouriteViewFactory(RepositoryFavorite(LocalDataClass(requireContext()), Serves()))
+            FavouriteViewFactory(RepositoryFavorite(LocalDataClass(requireContext()), RemotelyDataSource()))
         viewModel =
             ViewModelProvider(this, favouriteViewFactory).get(FavouriteViewModel::class.java)
         _binding = FragmentFavouriteBinding.inflate(inflater, container, false)

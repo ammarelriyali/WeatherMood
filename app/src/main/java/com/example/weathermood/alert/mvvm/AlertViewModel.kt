@@ -3,8 +3,7 @@ package com.example.weathermood.alert.mvvm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weathermood.alert.mvvm.repository.RepositoryAlert
-import com.example.weathermood.model.FavouriteLocation
-import com.example.weathermood.model.MyAlert
+import com.example.weathermood.model.AlertModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -21,7 +20,7 @@ class AlertViewModel(private val repository: RepositoryAlert) : ViewModel() {
         }
     }
 
-    fun delete(it: MyAlert) {
+    fun delete(it: AlertModel) {
         viewModelScope.launch(){
        repository.deleteAlertItem(it)
         getItems()

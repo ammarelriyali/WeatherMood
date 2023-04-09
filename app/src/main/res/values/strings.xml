@@ -62,6 +62,8 @@
     <string name="cancel">Cancel</string>
     <string name="alertType">Alert type</string>
     <string name="eventType">Event </string>
+    <string name="channel_name">Weather mood notification</string>
+    <string name="channel_description">Alert Notification</string>
     <string-array name="events_options">
         <item>@string/rain</item>
         <item>@string/storm</item>

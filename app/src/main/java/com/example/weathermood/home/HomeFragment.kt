@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mvvm.DB.LocalDataClass
-import com.example.mvvm.retroit.Serves
+import com.example.mvvm.retroit.RemotelyDataSource
 import com.example.weathermood.databinding.FragmentHomeBinding
 import com.example.weathermood.home.HomeFragmentDirections.actionNavHomeToMapsFragment
 import com.example.weathermood.home.mvvvm.HomeViewFactory
@@ -51,7 +51,6 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 
 import java.util.*
-import kotlin.math.log
 
 class HomeFragment : Fragment() {
 
@@ -80,7 +79,7 @@ companion object{
         savedInstanceState: Bundle?
     ): View {
 
-        val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), Serves()))
+        val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), RemotelyDataSource()))
 
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 

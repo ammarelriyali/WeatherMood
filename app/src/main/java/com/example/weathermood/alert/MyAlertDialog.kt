@@ -9,22 +9,22 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
+import androidx.work.*
 import com.example.mvvm.DB.LocalDataClass
 import com.example.weathermood.R
 import com.example.weathermood.databinding.FragmentMyAlertBinding
-import com.example.weathermood.model.MyAlert
+import com.example.weathermood.model.AlertModel
 import com.example.weathermood.model.OneCallHome
-import com.example.weathermood.utilities.Helper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MyAlertDialog : DialogFragment() {
@@ -90,7 +90,7 @@ class MyAlertDialog : DialogFragment() {
                 Toast.makeText(requireContext(),resources.getString(R.string.massgeErrorForEnterTimeAndDate),Toast.LENGTH_LONG).show()
             else{
                 viewLifecycleOwner.lifecycleScope.launch {
-                    local.setAlert(MyAlert( id=0,   dateForm,
+                    val i =local.setAlert(AlertModel( id=0,   dateForm,
                         hourFrom,
                         minuteFrom ,
                         dateTo  ,
@@ -102,9 +102,10 @@ class MyAlertDialog : DialogFragment() {
                         event ,
                         typeOfAlert
                     ))
+                    setPeriodWorkManger(i)
+                    setFragmentResult("", Bundle())
+                    dismiss()
                 }
-                setFragmentResult("", Bundle())
-                dismiss()
             }
         }
 
@@ -122,7 +123,7 @@ class MyAlertDialog : DialogFragment() {
                 .setTitleText(resources.getString(R.string.selectDate))
                 .build()
             pickerDate.addOnPositiveButtonClickListener(){
-                dateForm=it
+                dateForm=it-18312800000L
                 binding.tvTimeForm.text=getDate(it)+"  "+binding.tvTimeForm.text.toString()
             }
             picker.addOnPositiveButtonClickListener(){
@@ -177,4 +178,30 @@ class MyAlertDialog : DialogFragment() {
             return e.toString()
         }
     }
+
+    private fun setPeriodWorkManger(id: Long) {
+
+        val data = Data.Builder()
+        data.putLong("id", id)
+
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val periodicWorkRequest = PeriodicWorkRequest.Builder(
+            AlertPeriodicWorkManger::class.java,
+            24, TimeUnit.HOURS
+        )
+            .setConstraints(constraints)
+            .setInputData(data.build())
+            .build()
+
+        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
+            "$id",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            periodicWorkRequest
+        )
+    }
+
 }

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class MyAlert (
+data class AlertModel (
     @PrimaryKey(autoGenerate = true)
     val id :Int=0,
     var dateForm:Long= 0L,
@@ -18,4 +18,4 @@ data class MyAlert (
     var city :String="empty",
     var event :String="Rain",
     var typeOfAlert:String="alert"
-)
+):java.io.Serializable

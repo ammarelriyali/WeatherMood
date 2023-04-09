@@ -1,5 +1,9 @@
 package com.example.weathermood.model
 
+data class AlertResponse(
+val alerts :List<Alert>,
+val current: Current
+)
 data class Alert(
     val description: String,
     val end: Int,

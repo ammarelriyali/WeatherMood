@@ -2,13 +2,14 @@ package com.example.weathermood.alert.mvvm.repository
 
 import com.example.mvvm.DB.LocalData
 import com.example.weathermood.model.FavouriteLocation
-import com.example.weathermood.model.MyAlert
+import com.example.weathermood.model.AlertModel
+import com.example.weathermood.model.AlertResponse
 import com.example.weathermood.model.OneCall
-import com.example.weathermood.remoltydata.RemotelyDataSource
+import com.example.weathermood.remoltydata.IRemotelyDataSource
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
-class RepositoryAlert(val local: LocalData, val remotelyDataSource: RemotelyDataSource) :
+class RepositoryAlert(private val local: LocalData, private val remotely: IRemotelyDataSource) :
     IRepositoryAlert {
     override fun getFavItems(): Flow<List<FavouriteLocation>> {
         return local.getFavItems()
@@ -19,7 +20,7 @@ class RepositoryAlert(val local: LocalData, val remotelyDataSource: RemotelyData
         latitude: String,
 
     ): Flow<Response<OneCall>> {
-        return remotelyDataSource.getCurrentLocation(longitude, latitude)
+        return remotely.getCurrentLocation(longitude, latitude)
     }
 
     override suspend fun insertFav(data: FavouriteLocation) {
@@ -30,12 +31,24 @@ class RepositoryAlert(val local: LocalData, val remotelyDataSource: RemotelyData
         local.deleteFavItem(data)
     }
 
-    override fun getAlertItems(): Flow<List<MyAlert>> {
+    override fun getAlertItems(): Flow<List<AlertModel>> {
         return local.getAlertItems()
     }
 
-   override suspend   fun deleteAlertItem(it: MyAlert) {
+   override suspend   fun deleteAlertItem(it: AlertModel) {
         local.deleteAlertItme(it)
+    }
+
+     override fun getAlert(lat:String, log :String): Flow<Response<AlertResponse>> {
+        return remotely.getAlerts(log,lat)
+    }
+
+    override suspend fun getAlertDB(id: Int): AlertModel {
+       return local.getAlert(id)
+    }
+
+    override suspend fun deleteAlert(id: AlertModel) {
+       local.deleteAlertItme(id)
     }
 
 }

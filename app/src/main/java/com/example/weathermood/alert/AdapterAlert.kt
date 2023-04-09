@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weathermood.databinding.ItemRvAlertBinding
-import com.example.weathermood.model.MyAlert
+import com.example.weathermood.model.AlertModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AdapterAlert(
-    var data: List<MyAlert> = listOf(),
-    private val onDelete: (MyAlert) -> Unit,
+    var data: List<AlertModel> = listOf(),
+    private val onDelete: (AlertModel) -> Unit,
 ) : RecyclerView.Adapter<AdapterAlert.ViewHolder>() {
     lateinit var context: Context
 
@@ -19,7 +19,7 @@ class AdapterAlert(
         RecyclerView.ViewHolder(binding.root) {
     }
 
-    fun setList(data: List<MyAlert>) {
+    fun setList(data: List<AlertModel>) {
         this.data = data
         notifyDataSetChanged()
     }
