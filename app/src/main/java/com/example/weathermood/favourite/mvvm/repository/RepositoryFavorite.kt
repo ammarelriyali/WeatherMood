@@ -3,12 +3,12 @@ package com.example.weathermood.favourite.mvvm.repository
 import com.example.mvvm.DB.LocalData
 import com.example.weathermood.model.FavouriteLocation
 import com.example.weathermood.model.OneCall
-import com.example.weathermood.remoltydata.RemotelyDataSource
+import com.example.weathermood.remoltydata.IRemotelyDataSource
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
-class RepositoryFavorite(val local: LocalData, val remotelyDataSource: RemotelyDataSource) :
-    IRepositoryAlert {
+class RepositoryFavorite(val local: LocalData, val IRemotelyDataSource: IRemotelyDataSource) :
+    IRepositoryFavorite {
     override fun getFavItems(): Flow<List<FavouriteLocation>> {
         return local.getFavItems()
     }
@@ -18,7 +18,7 @@ class RepositoryFavorite(val local: LocalData, val remotelyDataSource: RemotelyD
         latitude: String,
 
     ): Flow<Response<OneCall>> {
-        return remotelyDataSource.getCurrentLocation(longitude, latitude)
+        return IRemotelyDataSource.getCurrentLocation(longitude, latitude)
     }
 
     override suspend fun insertFav(data: FavouriteLocation) {

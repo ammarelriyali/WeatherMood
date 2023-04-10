@@ -3,12 +3,13 @@ package com.example.weathermood.favourite.mvvm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weathermood.favourite.ResponseStateFav
-import com.example.weathermood.favourite.mvvm.repository.RepositoryAlert
+import com.example.weathermood.favourite.mvvm.repository.IRepositoryFavorite
+import com.example.weathermood.favourite.mvvm.repository.RepositoryFavorite
 import com.example.weathermood.model.FavouriteLocation
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class FavouriteViewModel(val repository: RepositoryAlert) : ViewModel() {
+class FavouriteViewModel(val repository: IRepositoryFavorite) : ViewModel() {
     private var _oneCall: MutableStateFlow<ResponseStateFav> =
         MutableStateFlow(ResponseStateFav.Loading)
     val response: MutableStateFlow<ResponseStateFav> = _oneCall
@@ -43,7 +44,6 @@ class FavouriteViewModel(val repository: RepositoryAlert) : ViewModel() {
             repository.getCurrentLocation(
                 favouriteLocation.longitude,
                 favouriteLocation.latitude,
-
             )
                 .catch { _oneCall.value = ResponseStateFav.Failure(it) }.collect() {
                    if (it.isSuccessful&& it.body() !=null)

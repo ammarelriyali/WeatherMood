@@ -1,5 +1,7 @@
 package com.example.createrecwithkotlin.retroit
 
+import com.example.weathermood.model.AlertModel
+import com.example.weathermood.model.AlertResponse
 import com.example.weathermood.model.OneCall
 import retrofit2.Response
 import retrofit2.http.GET
@@ -20,11 +22,13 @@ interface ApiInterface {
     @GET("onecall")
     suspend fun getAlerts(
         @Query("lat") lat: String,
-        @Query("log") log: String,
+        @Query("lon") log: String,
         @Query("lang") lang: String = "en",
         @Query("appid") api: String = "6cd7f954ec06ef046ce2fefb293967ed",
-        @Query("exclude") exclude: String = "minutely,hourly,daily,current"
-    ): Response<OneCall>
+        @Query("exclude") exclude: String = "minutely,hourly,daily"
+    ): Response<AlertResponse>
+
+
 
 
 }

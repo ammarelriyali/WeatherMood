@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#00FFFFFF"
+    tools:context=".alert.MyAlertDialog">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/side_nav_bar">
+
+        <Spinner
+            android:id="@+id/s_alert_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:entries="@array/events_options"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/b_from_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="120dp"
+            android:text="@string/startItme"
+            app:layout_constraintEnd_toStartOf="@+id/b_to_dialog"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s_alert_type" />
+
+        <Button
+            android:id="@+id/b_to_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/time_to"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s_alert_type" />
+
+        <TextView
+            android:id="@+id/tv_time_form"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/b_from_dialog"
+            app:layout_constraintStart_toStartOf="@+id/b_from_dialog"
+            app:layout_constraintTop_toBottomOf="@+id/b_from_dialog" />
+
+        <TextView
+            android:id="@+id/tv_time_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/b_to_dialog"
+            app:layout_constraintStart_toStartOf="@+id/b_to_dialog"
+            app:layout_constraintTop_toBottomOf="@+id/b_to_dialog" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:checkedButton="@id/rb_alert"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_time_form">
+
+            <RadioButton
+                android:id="@+id/rb_alert"
+                style="@style/radioButtonOnCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/alert" />
+
+            <RadioButton
+                android:id="@+id/rb_notifiaction"
+                style="@style/radioButtonOnCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notification" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/b_delete_alert_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:backgroundTint="?attr/colorSecondary"
+            android:textColor="?attr/colorOnSecondary"
+            android:text="@string/cancel"
+            app:layout_constraintBottom_toBottomOf="@+id/b_save_alert_dialog"
+            app:layout_constraintEnd_toStartOf="@+id/b_save_alert_dialog"
+            app:layout_constraintTop_toTopOf="@+id/b_save_alert_dialog" />
+
+        <Button
+            android:id="@+id/b_save_alert_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="19dp"
+            android:text="@string/save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

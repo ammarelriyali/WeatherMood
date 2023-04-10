@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mvvm.DB.LocalDataClass
-import com.example.mvvm.retroit.Serves
+import com.example.mvvm.retroit.RemotelyDataSource
 import com.example.weathermood.databinding.FragmentHomeBinding
 import com.example.weathermood.home.HomeFragmentDirections.actionNavHomeToMapsFragment
 import com.example.weathermood.home.mvvvm.HomeViewFactory
@@ -62,7 +62,9 @@ class HomeFragment : Fragment() {
     private val TAG: String = "TAGG"
     private var _binding: FragmentHomeBinding? = null
     private lateinit var fusedClient: FusedLocationProviderClient
-
+companion object{
+    var isNotOpen:Boolean=true
+}
 
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
@@ -77,7 +79,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), Serves()))
+        val myFactory = HomeViewFactory(RepositoryHome(LocalDataClass(requireContext()), RemotelyDataSource()))
 
         viewModel = ViewModelProvider(this, myFactory).get(HomeViewModel::class.java)
 
@@ -115,8 +117,8 @@ class HomeFragment : Fragment() {
                 when (it) {
                     is ResponseStateHome.SuccessApi -> {
                        try {
-                           
-                       
+
+
                             setData(it.data)}
                        catch (e:java.lang.Exception){
                            Log.i(TAG, "onCreateView: $e")
@@ -132,8 +134,6 @@ class HomeFragment : Fragment() {
                         this@HomeFragment.lon = it.data.oneCall.lon.toString()
 
                        try {
-                           
-                       
                             setData(it.data.oneCall)}
                        catch (e:java.lang.Exception){
                            Log.i(TAG, "onCreateView: ${e.message}")
@@ -189,18 +189,19 @@ class HomeFragment : Fragment() {
         if (MySharedPreference.isFirstTime()) {
             showDialog()
             MySharedPreference.setFirstTime()
-        } else if (args.isOpen) {
-            Log.i(TAG, "onResume: isopne")
+        } else if (args.isOpen &&isNotOpen) {
             if (args.lat != "0.0") {
                 lat = args.lat
                 lon = args.log
+                isNotOpen=false
                 handleIsOnlineState()
             }
         } else if (MySharedPreference.getWeatherFromMap()) {
-            Log.i(TAG, "onResume: getwheret")
             navigationFromHomeToMap()
-        } else
+            isNotOpen=true
+        } else{
             getLocation()
+        }
         viewModel.getWeather()
     }
 
@@ -211,6 +212,7 @@ class HomeFragment : Fragment() {
         }
         setFragmentResultListener(Helper.REQUEST_KEY_GPS) { s: String, b: Bundle ->
             MySharedPreference.setWeatherFromMap(false)
+            Log.i(TAG, "setFragmentRes: ------")
             getLocation()
 
         }
@@ -229,7 +231,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setData(data: OneCall) {
-
+        binding.tvLocationHome.text=city
         binding.tvDateHome.text = getDate(data.current!!.dt)
         binding.tvTempHome.text =
             data.current!!.temp.toString() + '\u00B0'.toString() + when (MySharedPreference.getUnits()) {
@@ -337,9 +339,8 @@ class HomeFragment : Fragment() {
             else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        lat = location.latitude.toString()
-                        lon = location.longitude.toString()
-                        getCityName()
+                       lon= location.longitude.toString()
+                       lat= location.latitude.toString()
                         handleIsOnlineState()
                     } catch (e: java.lang.Exception) {
                         Log.i(TAG, "getLocationData: gec ${e.message}")

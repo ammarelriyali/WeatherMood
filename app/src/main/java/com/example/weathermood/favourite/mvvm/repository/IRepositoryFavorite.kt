@@ -5,7 +5,7 @@ import com.example.weathermood.model.OneCall
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
-interface IRepositoryFavorite {
+interface IRepositoryFavorite{
     fun getFavItems(): Flow<List<FavouriteLocation>>
     fun getCurrentLocation(
         longitude: String,
