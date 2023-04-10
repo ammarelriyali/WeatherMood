@@ -41,7 +41,7 @@ class AlertView( private val context: Context,private val description: String) {
             PixelFormat.TRANSLUCENT
         )
         params.gravity = Gravity.START or Gravity.TOP
-
+        params.y=-(context.resources.displayMetrics.heightPixels * 0.80).toInt()
         windowManager.addView(view, params)
     }
 
