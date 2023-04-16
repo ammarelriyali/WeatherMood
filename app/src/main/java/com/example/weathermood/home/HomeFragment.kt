@@ -106,7 +106,15 @@ companion object{
             }
 
             binding.llLoctionName.setOnClickListener() {
+                if (isOnline()){
                 showDialog()
+                }else
+                    Snackbar.make(
+                        requireActivity().findViewById(android.R.id.content),
+                        "pls connect to internet",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+
             }
         }catch (e:java.lang.Exception){
             Log.i(TAG, "onCreateView: ${e.message}")
@@ -225,6 +233,7 @@ companion object{
 
     private fun showDialog() {
         enableShimmer()
+        isNotOpen=true
         val dialogFragment = MyHomeDialog()
         dialogFragment.isCancelable = false
         dialogFragment.show(getParentFragmentManager(), "MyDialogFragment")
@@ -241,7 +250,7 @@ companion object{
             }
         binding.tvStatusHome.text = data.current!!.weather[0].description
         binding.tvLastUpdateHome.text =
-            getString(com.example.weathermood.R.string.lastUpdate) + getTime(data.current!!.dt)
+            getString(com.example.weathermood.R.string.lastUpdate) +" "+ getTime(data.current!!.dt)
 
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)

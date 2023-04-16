@@ -1,9 +1,7 @@
 package com.example.weathermood.alert
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +9,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.work.*
 import com.example.mvvm.DB.LocalDataClass
 import com.example.weathermood.R
+import com.example.weathermood.alert.Service.AlertPeriodicWorkManger
 import com.example.weathermood.databinding.FragmentMyAlertBinding
 import com.example.weathermood.model.AlertModel
 import com.example.weathermood.model.OneCallHome
@@ -48,6 +46,7 @@ class MyAlertDialog : DialogFragment() {
     var typeOfAlert="alert"
     lateinit var current :OneCallHome
     private val binding get() = _binding!!
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,7 +77,6 @@ class MyAlertDialog : DialogFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 event= resources.getStringArray(R.array.events_options)[position]
-                Log.i("TAG", "onCreateView: $event")
             }
 
         }
@@ -94,7 +92,8 @@ class MyAlertDialog : DialogFragment() {
                 Toast.makeText(requireContext(),resources.getString(R.string.massgeErrorForEnterTimeAndDate),Toast.LENGTH_LONG).show()
             else{
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val i =local.setAlert(AlertModel( id=0,   dateForm,
+                    val i =local.setAlert(AlertModel( id=0,
+                        dateForm,
                         hourFrom,
                         minuteFrom ,
                         dateTo  ,
@@ -127,7 +126,7 @@ class MyAlertDialog : DialogFragment() {
                 .setTitleText(resources.getString(R.string.selectDate))
                 .build()
             pickerDate.addOnPositiveButtonClickListener(){
-                dateForm=it-18312800000L
+                dateForm=getUnixWithoutTime(it)
                 binding.tvTimeForm.text=getDate(it)+"  "+binding.tvTimeForm.text.toString()
             }
             picker.addOnPositiveButtonClickListener(){
@@ -176,11 +175,21 @@ class MyAlertDialog : DialogFragment() {
     private fun getDate(s: Long): String? {
         try {
             val sdf = SimpleDateFormat("dd-MMMM")
-            val netDate = Date(s * 1000)
+            val netDate = Date(s )
             return sdf.format(netDate)
         } catch (e: Exception) {
             return e.toString()
         }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getUnixWithoutTime(u:Long):Long{
+        val now = Calendar.getInstance()
+        now.set(Calendar.HOUR_OF_DAY, 0)
+        now.set(Calendar.MINUTE, 0)
+        now.set(Calendar.SECOND, 0)
+        now.set(Calendar.MILLISECOND, 0)
+        val unixTimestampWithoutTime = now.timeInMillis / 1000L
+        return unixTimestampWithoutTime
     }
 
     private fun setPeriodWorkManger(id: Long) {
