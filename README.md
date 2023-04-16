@@ -49,7 +49,7 @@
 - Material Design
 
 <hr>
-<img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/master/screenshots/1.png" width="45%">
+<img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/1.png" width="45%">
 <hr>
 
 <p align="center">
