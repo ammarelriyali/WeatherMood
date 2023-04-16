@@ -1,4 +1,4 @@
-# WeatherApp
+# WeatherMood
 
  Native Mobile Android Application to get weather forecast, open source and free,using design architecture MVVM.
 
@@ -50,14 +50,14 @@
 
 <hr>
 <p align="center">
-<img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/1.png" width="45%">
+<img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/2.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/15.png" width="45%">
 </p>
 <hr>
 
 <p align="center">
-<img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/2.png" width="45%">
+<img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/1.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/3.png" width="45%">
 </p>
