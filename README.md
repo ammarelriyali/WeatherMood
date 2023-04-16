@@ -61,31 +61,33 @@
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/3.png" width="45%">
 </p>
-
+<hr>
 <p align="center">
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/4.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/5.png" width="45%">
 </p>
 
-
+<hr>
 <p align="center">
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/6.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/7.png" width="45%">
 </p>
-
+<hr>
 
 <p align="center">
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/8.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/9.png" width="45%">
 </p>
+<hr>
 <p align="center">
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/10.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/11.png" width="45%">
 </p>
+<hr>
 <p align="center">
 <img alt="Light" src="https://github.com/ammarelriyali/WeatherMood/blob/main/screenshots/12.png" width="45%">
 &nbsp; &nbsp; &nbsp; &nbsp;
