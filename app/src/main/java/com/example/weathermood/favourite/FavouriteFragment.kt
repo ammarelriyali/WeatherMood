@@ -44,21 +44,33 @@ class FavouriteFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    lateinit var viewModel:FavouriteViewModel
+    lateinit var viewModel: FavouriteViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val favouriteViewFactory =
-            FavouriteViewFactory(RepositoryFavorite(LocalDataClass(requireContext()), RemotelyDataSource()))
+            FavouriteViewFactory(
+                RepositoryFavorite(
+                    LocalDataClass(requireContext()),
+                    RemotelyDataSource()
+                )
+            )
         viewModel =
             ViewModelProvider(this, favouriteViewFactory).get(FavouriteViewModel::class.java)
         _binding = FragmentFavouriteBinding.inflate(inflater, container, false)
         binding.avEmptyLocation.playAnimation()
         binding.fabAddLocation.setOnClickListener() {
-            val x = FavouriteFragmentDirections.actionNavFavouriteToMapsFragment()
-            findNavController().navigate(x)
+            if (isOnline()) {
+                val x = FavouriteFragmentDirections.actionNavFavouriteToMapsFragment()
+                findNavController().navigate(x)
+            } else
+                Snackbar.make(
+                    requireActivity().findViewById(android.R.id.content),
+                    "please open internet",
+                    Snackbar.LENGTH_LONG
+                ).show()
         }
         val adapter = FavouriteAdapter(onDelete = { viewModel.delete(it);showSnack(it) },
             onCLick = { handleIsOnlineState(it);data = it; showShimmer() })
@@ -184,7 +196,7 @@ class FavouriteFragment : Fragment() {
             data.current!!.temp.toString() + '\u00B0'.toString() + "K"
         binding.tvStatusFavourite.text = data.current!!.weather[0].description
         binding.tvLastUpdateFavourite.text =
-            getString(R.string.lastUpdate) + getTime(data.current!!.dt)
+            getString(R.string.lastUpdate)+" "+ getTime(data.current!!.dt)
 
         dailyAdapter.setData(data.daily!!)
         hourlyAdapter.setData(data.hourly!!)
@@ -240,8 +252,8 @@ class FavouriteFragment : Fragment() {
             ).show()
             showList()
         }
-
     }
+
 
     private fun isOnline(): Boolean {
         val connectivityManager =

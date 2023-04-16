@@ -16,14 +16,14 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherMood"
         tools:targetApi="31">
 
         <service
-                     android:name=".alert.AlertService"
+                     android:name=".alert.Service.AlertService"
                       android:enabled="true"
                       android:exported="true" />
 

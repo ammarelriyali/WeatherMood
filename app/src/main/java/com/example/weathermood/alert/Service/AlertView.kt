@@ -1,4 +1,4 @@
-package com.example.weathermood.alert
+package com.example.weathermood.alert.Service
 
 import android.content.Context
 import android.content.Intent

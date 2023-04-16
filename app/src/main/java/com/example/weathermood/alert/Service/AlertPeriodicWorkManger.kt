@@ -1,5 +1,4 @@
-package com.example.weathermood.alert
-
+package com.example.weathermood.alert.Service
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -11,7 +10,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.work.*
+import androidx.work.CoroutineWorker
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.example.mvvm.DB.LocalDataClass
 import com.example.mvvm.retroit.RemotelyDataSource
 import com.example.weathermood.R
@@ -23,7 +24,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val CHANNEL_ID = 2
-
 class AlertPeriodicWorkManger(private val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
@@ -48,7 +48,7 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
         }.collect() {
             if (it.isSuccessful) {
                 if (checkTimeLimit(alert)) {
-                    delay(2000)
+                    delay(getDelay(alert))
                     if (it.body()?.alerts.isNullOrEmpty()) {
                         setOneTimeWorkManger(
                             it.body()?.current?.weather?.get(0)?.description ?: "",
@@ -76,6 +76,12 @@ class AlertPeriodicWorkManger(private val context: Context, workerParams: Worker
             }
         }
 
+
+    }
+
+    private fun getDelay(alert: AlertModel): Long {
+        val time =(alert.hourTo.toLong()*3600000+alert.minuteTo.toLong()*60000)-(alert.hourFrom.toLong()*3600000+alert.minuteFrom.toLong()*60000)
+        return time
 
     }
 

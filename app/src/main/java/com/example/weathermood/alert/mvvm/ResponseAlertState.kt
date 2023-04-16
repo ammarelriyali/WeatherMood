@@ -1,4 +1,4 @@
-package com.example.weathermood.alert
+package com.example.weathermood.alert.mvvm
 
 import com.example.weathermood.model.FavouriteLocation
 import com.example.weathermood.model.OneCall

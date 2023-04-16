@@ -94,10 +94,6 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.7.1"
 
 
-    // AndroidX Test - Instrumented testing
-    androidTestImplementation "androidx.test.ext:junit:$androidXTestExtKotlinRunnerVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
-
 
     // hamcrest
     testImplementation "org.hamcrest:hamcrest:2.2"
@@ -113,11 +109,13 @@ dependencies {
 
     // InstantTaskExecutorRule
     testImplementation "androidx.arch.core:core-testing:2.1.0"
+    //androidTestImplementation
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
 
     //coroutines for test
     testImplementation"org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
     androidTestImplementation"org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
 
-    //androidTestImplementation
-    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+
+
 }

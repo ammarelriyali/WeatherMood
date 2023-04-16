@@ -17,7 +17,7 @@
     <string name="undo">تراجع</string>
     <string name="weHadIssue">يوجد مشكله رجاء عاود المحاوله</string>
     <string name="serverHadIssue">السرفير يوجد بيه عطل رجاء عاود المحاورلة</string>
-    <string name="lastUpdate">"اخر تحديث  "</string>
+    <string name="lastUpdate">"اخر تحديث"</string>
     <string name="address">العنوان</string>
     <string name="today">اليوم</string>
     <string name="location">الموقع</string>

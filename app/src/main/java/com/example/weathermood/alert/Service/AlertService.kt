@@ -1,6 +1,9 @@
-package com.example.weathermood.alert
+package com.example.weathermood.alert.Service
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -12,6 +15,7 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.weathermood.MainActivity
+import com.example.weathermood.R
 
 
 private const val CHANNEL_ID = 1
@@ -49,7 +53,10 @@ class AlertService : Service() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 
 
-        return NotificationCompat.Builder(applicationContext, "$CHANNEL_ID")
+        return NotificationCompat.Builder(
+            applicationContext,
+            "${CHANNEL_ID}"
+        )
             .setSmallIcon(com.example.weathermood.R.drawable.twotone_notifications_24)
             .setContentText(description)
             .setContentTitle(applicationContext.getString(com.example.weathermood.R.string.header_notification))
@@ -57,9 +64,12 @@ class AlertService : Service() {
             .setStyle(
                 NotificationCompat.BigTextStyle()
                     .bigText(description)
-            ).setSound(Uri.parse(
-                ("android.resource://"
-                        + applicationContext.packageName) + "/" + com.example.weathermood.R.raw.alert),AudioManager.STREAM_NOTIFICATION)
+            ).setSound(
+                Uri.parse(
+                    ("android.resource://"
+                            + applicationContext.packageName) + "/" + R.raw.alert
+                ), AudioManager.STREAM_NOTIFICATION
+            )
             .setVibrate(longArrayOf(200, 200, 200, 200, 200))
             .setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_VIBRATE)
@@ -68,27 +78,26 @@ class AlertService : Service() {
     }
 
     private fun notificationChannel() {
-//        val soundUri: Uri = Uri.parse(
-//            "android.resource://" +
-//                    applicationContext.packageName +
-//                    "/" +
-//                    com.example.weathermood.R.raw.alert
-//        )
+        val soundUri: Uri = Uri.parse(
+            "android.resource://" +
+                    applicationContext.packageName +
+                    "/" +
+                    com.example.weathermood.R.raw.alert
+        )
 
-
+        val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val att = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-            val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             val name: String = getString(com.example.weathermood.R.string.channel_name)
             val description = getString(com.example.weathermood.R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("$CHANNEL_ID",name, importance)
+            val channel =
+                NotificationChannel("${CHANNEL_ID}", name, importance)
             channel.enableVibration(true)
             channel.description = description
-            channel.setSound(alarmSound,att)
+            channel.setSound(soundUri,audioAttributes)
             notificationManager = this.getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
