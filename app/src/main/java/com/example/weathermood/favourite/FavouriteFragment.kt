@@ -27,6 +27,7 @@ import com.example.weathermood.home.DailyAdapter
 import com.example.weathermood.home.HourlyAdapter
 import com.example.weathermood.model.FavouriteLocation
 import com.example.weathermood.model.OneCall
+import com.example.weathermood.shareperf.MySharedPreference
 import com.example.weathermood.utilities.Helper
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -192,8 +193,11 @@ class FavouriteFragment : Fragment() {
 
         binding.tvDateFavourite.text = getDate(data.current!!.dt)
         binding.tvTempFavourite.text =
-
-            data.current!!.temp.toString() + '\u00B0'.toString() + "K"
+            data.current!!.temp.toString() + '\u00B0'.toString() + when (MySharedPreference.getUnits()) {
+                "metric" -> "C"
+                "imperial" -> "F"
+                else -> "K"
+            }
         binding.tvStatusFavourite.text = data.current!!.weather[0].description
         binding.tvLastUpdateFavourite.text =
             getString(R.string.lastUpdate)+" "+ getTime(data.current!!.dt)

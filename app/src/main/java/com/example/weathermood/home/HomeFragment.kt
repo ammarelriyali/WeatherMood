@@ -125,8 +125,6 @@ companion object{
                 when (it) {
                     is ResponseStateHome.SuccessApi -> {
                        try {
-
-
                             setData(it.data)}
                        catch (e:java.lang.Exception){
                            Log.i(TAG, "onCreateView: $e")
